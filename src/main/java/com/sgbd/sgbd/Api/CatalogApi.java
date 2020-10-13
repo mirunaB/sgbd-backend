@@ -1,5 +1,6 @@
 package com.sgbd.sgbd.Api;
 
+import com.sgbd.sgbd.Model.Column;
 import com.sgbd.sgbd.Service.Catalog;
 import com.sgbd.sgbd.Service.exception.ExceptionType;
 import com.sgbd.sgbd.Service.exception.ServiceException;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("catalog")
-// FIXME: This application has no explicit mapping for /error, so you are seeing this as a fallback.
 public class CatalogApi {
 
     private final Logger logger = LogManager.getLogger(CatalogApi.class);
@@ -59,7 +59,7 @@ public class CatalogApi {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @DeleteMapping(value = "/dropTable/{nameDb}/{nameTable}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/dropTable/{dbName}/{tableName}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity dropTable(@PathVariable String nameDb,@PathVariable  String nameTable ){
 
         logger.info("LOG START - dropDatabase");
@@ -69,20 +69,23 @@ public class CatalogApi {
         }
         catch (ServiceException ex){
             throw new ServiceException("There is no table in this database with this name ",ExceptionType.DATABASE_OR_TABLE_NOT_EXISTS,HttpStatus.BAD_REQUEST);
-
         }
+
         logger.info("LOG FINISH - dropDatabase");
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping(value = "/dropTable/{dbName}/{tableName}/{fileName}/{rowLength}/{columns}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity saveTable(@PathVariable String dbName, @PathVariable  String tableName, @PathVariable String fileName, @PathVariable String rowLength, @PathVariable Column... columns){
 
+        logger.info("LOG START - saveTable");
 
-//    @ExceptionHandler()
-//    @ResponseBody
-//    public ResponseEntity handleException() {
-//
-//        return new ResponseEntity(HttpStatus.OK);
-//    }
+        catalog.saveTable(dbName, tableName, fileName, rowLength, columns);
+
+        logger.info("LOG FINISH - saveTable");
+        return new ResponseEntity(HttpStatus.OK);
+    }
 
     @ExceptionHandler({ServiceException.class})
     public ResponseEntity<ExceptionType> handleException(ServiceException exception) {
