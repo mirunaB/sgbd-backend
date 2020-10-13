@@ -23,6 +23,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @org.springframework.stereotype.Service
 @Primary
@@ -204,24 +206,38 @@ public class CatalogImpl implements Catalog {
 
         NodeList tableList = doc.getElementsByTagName(XMLConstants.TABLE_TAG);
 
-        boolean isDrop=false;
-        int i;
-        for(i=0; i<tableList.getLength(); i++){
+        boolean isDeleted=false;
+        for(int i=0; i<tableList.getLength(); i++){
             Element currentTable = (Element)tableList.item(i);
             Element currentDb = (Element) currentTable.getParentNode().getParentNode();
 
             if(currentTable.getAttribute(XMLConstants.TABLE_NAME_TAG).equals(tableName)
             && currentDb.getAttribute(XMLConstants.NAME_TAG).equals(dbName)){
                 currentTable.getParentNode().removeChild(currentTable);
-                isDrop=true;
+                isDeleted=true;
             }
         }
 
-//        if (isDrop==false){
+//        if (isDeleted==false){
 //            throw new ServiceException("There is no table in this database with this name ",ExceptionType.DATABASE_OR_TABLE_NOT_EXISTS,HttpStatus.BAD_REQUEST);
-//      }
+//        }
 
         submitChangesToFile();
+    }
+
+    @Override
+    public List<String> getAllDatabase() {
+
+        List<String> allDb=new ArrayList<>();
+        NodeList nodeList = doc.getElementsByTagName(XMLConstants.DATABASE_TAG);
+
+        for(int i=0; i<nodeList.getLength(); i++){
+            Element currentElement = (Element)nodeList.item(i);
+            String name=currentElement.getAttribute(XMLConstants.NAME_TAG);
+            allDb.add(name);
+        }
+        return allDb;
+
     }
 
     /**
