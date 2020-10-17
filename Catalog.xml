@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-
+<DataBases>
     <DataBase name="xxss">
-    <Tables/>
+        <Tables/>
     </DataBase>
     <DataBase name="miruna">
         <Tables/>
@@ -9,56 +9,4 @@
     <DataBase name="mirun">
         <Tables/>
     </DataBase>
-</Databases>
-=======
-    <DataBase name="Radu">
-        <Tables>
-            <Table fileName="table.txt" rowLength="12" tableName="mytable">
-                <Structure>
-                    <Attribute attributeName="Specid" isnull="false" length="20" type="string"/>
-                    <Attribute attributeName="text" isnull="false" length="20" type="string"/>
-                </Structure>
-                <primaryKey>
-                    <pkAttribute>Specid</pkAttribute>
-                </primaryKey>
-                <uniqueKeys>
-                    <UniqueAttribute>Specid</UniqueAttribute>
-                    <UniqueAttribute>text</UniqueAttribute>
-                </uniqueKeys>
-                <IndexFiles>
-                    <IndexFiles indexName="SpecIdIndex" indexType="BTree" isUnique="true" keyLength="22">
-                        <IndexAttributes>
-                            <IAttribute>SpecIdIndex</IAttribute>
-                        </IndexAttributes>
-                    </IndexFiles>
-                </IndexFiles>
-            </Table>
-        </Tables>
-    </DataBase>
-    <DataBase name="miruna">
-        <Tables>
-            <Table fileName="tableM.txt" rowLength="12" tableName="tableM">
-                <Structure>
-                    <Attribute attributeName="Specid" isnull="false" length="20" type="string"/>
-                    <Attribute attributeName="text" isnull="false" length="20" type="string"/>
-                </Structure>
-                <primaryKey>
-                    <pkAttribute>Specid</pkAttribute>
-                </primaryKey>
-                <uniqueKeys>
-                    <UniqueAttribute>Specid</UniqueAttribute>
-                    <UniqueAttribute>text</UniqueAttribute>
-                </uniqueKeys>
-                <IndexFiles>
-                    <IndexFiles indexName="SpecIdIndex" indexType="BTree" isUnique="true" keyLength="22">
-                        <IndexAttributes>
-                            <IAttribute>SpecIdIndex</IAttribute>
-                        </IndexAttributes>
-                    </IndexFiles>
-                </IndexFiles>
-            </Table>
-
-        <Table fileName="" rowLength="" tableName="test"><Structure><Attribute attributeName="col1" isnull="false" length="1" type="String"/></Structure><primaryKey/><uniqueKeys/><IndexFiles><IndexFiles indexName="index" indexType="a" isUnique="false" keyLength="0"><IndexAttributes><IAttribute>index</IAttribute></IndexAttributes></IndexFiles></IndexFiles></Table><Table fileName="" rowLength="" tableName="tabela1"><Structure><Attribute attributeName="a" isnull="false" length="255" type="String"/></Structure><primaryKey/><uniqueKeys/><IndexFiles/></Table></Tables>
-    </DataBase>
-</Databases>
->>>>>>> a32ac8ea6f33068591847c83717a983248d98070
+</DataBases>

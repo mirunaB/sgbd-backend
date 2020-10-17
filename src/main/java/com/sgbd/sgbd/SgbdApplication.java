@@ -15,8 +15,8 @@ public class SgbdApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SgbdApplication.class, args);
-		CatalogService c=new CatalogImpl();
-		c.dropTable("miruna","table2");
+		//CatalogService c=new CatalogImpl();
+		//c.dropTable("miruna","table2");
 	}
 
 }

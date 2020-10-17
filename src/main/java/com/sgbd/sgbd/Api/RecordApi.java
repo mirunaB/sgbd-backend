@@ -43,7 +43,7 @@ public class RecordApi {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @DeleteMapping(value = "/saveRecord/{dbName}/{tableName}/{record}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/deleteRecord/{dbName}/{tableName}/{record}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity deleteRecord(@PathVariable String dbName, @PathVariable String tableName, Record record) {
 
         logger.info("LOG START - deleteRecord");
@@ -55,7 +55,7 @@ public class RecordApi {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @DeleteMapping(value = "/saveRecord/{dbName}/{tableName}/{record}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/updateRecord/{dbName}/{tableName}/{record}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateRecord(@PathVariable String dbName, @PathVariable String tableName, @PathVariable Record record){
 
         logger.info("LOG START - updateRecord");
@@ -72,7 +72,7 @@ public class RecordApi {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @DeleteMapping(value = "/dropTable/{dbName}/{tableName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "/findAll/{dbName}/{tableName}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map> findAll(@PathVariable String dbName, @PathVariable String tableName){
 
         logger.info("LOG START - updateRecord");
