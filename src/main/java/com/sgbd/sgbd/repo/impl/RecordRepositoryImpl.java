@@ -15,6 +15,8 @@ public class RecordRepositoryImpl implements RecordRepository {
     private RedisTemplate<String, String> redisTemplate;
     private HashOperations hashOperations;
 
+    private static final String DATABASE_TABLE_SEPARATOR = ".";
+
     public RecordRepositoryImpl(RedisTemplate<String, String> redisTemplate) {
 
         this.redisTemplate = redisTemplate;
@@ -23,17 +25,17 @@ public class RecordRepositoryImpl implements RecordRepository {
 
     @Override
     public void save(String dbName, String tableName, Record record) {
-        hashOperations.put(tableName, record.getPrimaryKeySet(), record);
+        hashOperations.put(dbName +  DATABASE_TABLE_SEPARATOR + tableName, record.getPrimaryKeySet(), record);
     }
 
     @Override
     public Map findAll(String dbName, String tableName) {
-        return hashOperations.entries(tableName);
+        return hashOperations.entries(dbName + DATABASE_TABLE_SEPARATOR + tableName);
     }
 
     @Override
     public Record findById(String dbName, String tableName, Set<String> id) {
-        return (Record)hashOperations.get(tableName, id);
+        return (Record)hashOperations.get(dbName + DATABASE_TABLE_SEPARATOR + tableName, id);
     }
 
     @Override
@@ -43,6 +45,6 @@ public class RecordRepositoryImpl implements RecordRepository {
 
     @Override
     public void delete(String dbName, String tableName, Record record) {
-        hashOperations.delete(tableName, record);
+        hashOperations.delete(dbName + DATABASE_TABLE_SEPARATOR + tableName, record);
     }
 }
