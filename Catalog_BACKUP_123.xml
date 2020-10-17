@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Databases>
+
+<<<<<<< HEAD
 
     <DataBase name="xxss">
-    <Tables/>
+        <Tables/>
     </DataBase>
     <DataBase name="miruna">
         <Tables/>

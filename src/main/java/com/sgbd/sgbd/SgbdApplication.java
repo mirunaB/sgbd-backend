@@ -18,4 +18,5 @@ public class SgbdApplication extends SpringBootServletInitializer {
 		CatalogService c=new CatalogImpl();
 		c.dropTable("miruna","table2");
 	}
+
 }
