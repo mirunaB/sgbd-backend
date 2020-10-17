@@ -1,17 +1,9 @@
 package com.sgbd.sgbd.Api;
 
-<<<<<<< HEAD
-import com.sgbd.sgbd.model.Column;
+import com.sgbd.sgbd.model.TableReq;
 import com.sgbd.sgbd.service.CatalogService;
 import com.sgbd.sgbd.service.exception.ExceptionType;
 import com.sgbd.sgbd.service.exception.ServiceException;
-=======
-import com.sgbd.sgbd.Model.Column;
-import com.sgbd.sgbd.Model.TableReq;
-import com.sgbd.sgbd.Service.Catalog;
-import com.sgbd.sgbd.Service.exception.ExceptionType;
-import com.sgbd.sgbd.Service.exception.ServiceException;
->>>>>>> a32ac8ea6f33068591847c83717a983248d98070
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +80,7 @@ public class CatalogApi {
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value="/databases")
     public List<String> getAllDatabase(){
-        return catalog.getAllDatabase();
+        return catalogService.getAllDatabase();
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
@@ -97,12 +89,7 @@ public class CatalogApi {
 
         logger.info("LOG START - saveTable");
 
-<<<<<<< HEAD
-        catalogService.saveTable(dbName, tableName, fileName, rowLength, columns);
-=======
-
-        catalog.saveTable(dbName, tableName, null, "", columns.getCols());
->>>>>>> a32ac8ea6f33068591847c83717a983248d98070
+        catalogService.saveTable(dbName, tableName, null, "", columns.getCols());
 
         logger.info("LOG FINISH - saveTable");
         return new ResponseEntity(HttpStatus.OK);
