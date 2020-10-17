@@ -1,4 +1,4 @@
-package com.sgbd.sgbd.Api;
+package com.sgbd.sgbd.api;
 
 import com.sgbd.sgbd.model.TableReq;
 import com.sgbd.sgbd.service.CatalogService;
@@ -35,7 +35,6 @@ public class CatalogApi {
 
         logger.info("LOG START - saveDatabase");
 
-
         catalogService.saveDatabase(name);
 
         logger.info("LOG FINISH - saveDatabase");
@@ -50,10 +49,8 @@ public class CatalogApi {
 
         try {
             catalogService.dropDatabase(name);
-        }
-         catch (ServiceException err){
+        } catch (ServiceException err) {
             throw new ServiceException("This database doesn't exist", ExceptionType.DATABASE_NOT_EXISTS, HttpStatus.BAD_REQUEST);
-
         }
 
         logger.info("LOG FINISH - dropDatabase");
@@ -80,7 +77,13 @@ public class CatalogApi {
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value="/databases")
     public List<String> getAllDatabase(){
-        return catalogService.getAllDatabase();
+
+        logger.info("LOG START - getAllDatabases");
+
+        List<String> allDatabase = catalogService.getAllDatabase();
+
+        logger.info("LOG FINISH - getAllDatabases");
+        return allDatabase;
     }
 
     @CrossOrigin(origins = "http://localhost:3000")

@@ -1,4 +1,4 @@
-package com.sgbd.sgbd.Api;
+package com.sgbd.sgbd.api;
 
 import com.sgbd.sgbd.model.Record;
 import com.sgbd.sgbd.service.RecordService;
@@ -77,13 +77,7 @@ public class RecordApi {
 
         logger.info("LOG START - updateRecord");
 
-        Map result;
-        try {
-            result = recordService.findAll(dbName, tableName);
-        }
-        catch (ServiceException ex){
-            throw new ServiceException("There is no table in this database with this name ",ExceptionType.DATABASE_OR_TABLE_NOT_EXISTS,HttpStatus.BAD_REQUEST);
-        }
+        Map result = recordService.findAll(dbName, tableName);
 
         logger.info("LOG FINISH - updateRecord");
         return new ResponseEntity<>(result, HttpStatus.OK);
