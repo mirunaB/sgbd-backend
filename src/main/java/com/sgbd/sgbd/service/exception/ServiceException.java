@@ -1,4 +1,4 @@
-package com.sgbd.sgbd.Service.exception;
+package com.sgbd.sgbd.service.exception;
 
 import org.springframework.http.HttpStatus;
 

@@ -1,4 +1,4 @@
-package com.sgbd.sgbd.Service.exception;
+package com.sgbd.sgbd.service.exception;
 
 public enum ExceptionType {
     DATABASE_NOT_EXISTS,

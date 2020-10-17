@@ -1,4 +1,4 @@
-package com.sgbd.sgbd.Constants;
+package com.sgbd.sgbd.constants;
 
 public class XMLConstants {
 

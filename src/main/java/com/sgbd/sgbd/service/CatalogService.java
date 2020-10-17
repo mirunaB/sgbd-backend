@@ -1,8 +1,8 @@
-package com.sgbd.sgbd.Service;
+package com.sgbd.sgbd.service;
 
-import com.sgbd.sgbd.Model.Column;
+import com.sgbd.sgbd.model.Column;
 
-public interface Catalog {
+public interface CatalogService {
 
     void saveDatabase(String dbName);
     void dropDatabase(String dbName);

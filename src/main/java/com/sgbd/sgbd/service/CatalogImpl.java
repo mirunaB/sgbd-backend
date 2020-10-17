@@ -1,9 +1,9 @@
-package com.sgbd.sgbd.Service;
+package com.sgbd.sgbd.service;
 
-import com.sgbd.sgbd.Model.Column;
-import com.sgbd.sgbd.Constants.XMLConstants;
-import com.sgbd.sgbd.Service.exception.ExceptionType;
-import com.sgbd.sgbd.Service.exception.ServiceException;
+import com.sgbd.sgbd.model.Column;
+import com.sgbd.sgbd.constants.XMLConstants;
+import com.sgbd.sgbd.service.exception.ExceptionType;
+import com.sgbd.sgbd.service.exception.ServiceException;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -27,7 +27,7 @@ import java.io.IOException;
 @org.springframework.stereotype.Service
 @Primary
 @Component
-public class CatalogImpl implements Catalog {
+public class CatalogImpl implements CatalogService {
 
     public static final String FILE_NAME = "Catalog.xml";
     private DocumentBuilderFactory dbFactory;

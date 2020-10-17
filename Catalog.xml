@@ -1,5 +1,14 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><Databases>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<Databases>
 
-    
-    
-<DataBase name="xxss"><Tables/></DataBase><DataBase name="miruna"><Tables/></DataBase><DataBase name="mirun"><Tables/></DataBase></Databases>
+
+    <DataBase name="xxss">
+        <Tables/>
+    </DataBase>
+    <DataBase name="miruna">
+        <Tables/>
+    </DataBase>
+    <DataBase name="mirun">
+        <Tables/>
+    </DataBase>
+</Databases>

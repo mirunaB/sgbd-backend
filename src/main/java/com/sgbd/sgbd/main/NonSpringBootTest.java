@@ -1,14 +1,14 @@
-package com.sgbd.sgbd.Main;
+package com.sgbd.sgbd.main;
 
-import com.sgbd.sgbd.Model.Column;
-import com.sgbd.sgbd.Service.Catalog;
-import com.sgbd.sgbd.Service.CatalogImpl;
+import com.sgbd.sgbd.model.Column;
+import com.sgbd.sgbd.service.CatalogService;
+import com.sgbd.sgbd.service.CatalogImpl;
 
 
 public class NonSpringBootTest {
     public static void main(String[] args) {
 
-        Catalog catalog = new CatalogImpl();
+        CatalogService catalog = new CatalogImpl();
         catalog.saveDatabase("Radu");
         //catalog.dropDatabase("anjnaja") ;
         //catalog.dropTable("Radu", "mytable");

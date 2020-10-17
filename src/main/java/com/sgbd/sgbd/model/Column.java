@@ -1,4 +1,4 @@
-package com.sgbd.sgbd.Model;
+package com.sgbd.sgbd.model;
 
 import lombok.*;
 

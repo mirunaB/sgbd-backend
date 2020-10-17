@@ -1,9 +1,9 @@
 package com.sgbd.sgbd.Api;
 
-import com.sgbd.sgbd.Model.Column;
-import com.sgbd.sgbd.Service.Catalog;
-import com.sgbd.sgbd.Service.exception.ExceptionType;
-import com.sgbd.sgbd.Service.exception.ServiceException;
+import com.sgbd.sgbd.model.Column;
+import com.sgbd.sgbd.service.CatalogService;
+import com.sgbd.sgbd.service.exception.ExceptionType;
+import com.sgbd.sgbd.service.exception.ServiceException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class CatalogApi {
     private final Logger logger = LogManager.getLogger(CatalogApi.class);
 
     @Autowired
-    private Catalog catalog;
+    private CatalogService catalogService;
 
     @RequestMapping(value = "/test", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity test() {
@@ -34,7 +34,7 @@ public class CatalogApi {
         logger.info("LOG START - saveDatabase");
 
 
-        catalog.saveDatabase(name);
+        catalogService.saveDatabase(name);
 
         logger.info("LOG FINISH - saveDatabase");
         return new ResponseEntity(HttpStatus.OK);
@@ -47,7 +47,7 @@ public class CatalogApi {
         logger.info("LOG START - dropDatabase");
 
         try {
-            catalog.dropDatabase(name);
+            catalogService.dropDatabase(name);
         }
          catch (ServiceException err){
             throw new ServiceException("This database doesn't exist", ExceptionType.DATABASE_NOT_EXISTS, HttpStatus.BAD_REQUEST);
@@ -65,7 +65,7 @@ public class CatalogApi {
         logger.info("LOG START - dropDatabase");
 
         try {
-            catalog.dropTable(nameDb, nameTable);
+            catalogService.dropTable(nameDb, nameTable);
         }
         catch (ServiceException ex){
             throw new ServiceException("There is no table in this database with this name ",ExceptionType.DATABASE_OR_TABLE_NOT_EXISTS,HttpStatus.BAD_REQUEST);
@@ -81,7 +81,7 @@ public class CatalogApi {
 
         logger.info("LOG START - saveTable");
 
-        catalog.saveTable(dbName, tableName, fileName, rowLength, columns);
+        catalogService.saveTable(dbName, tableName, fileName, rowLength, columns);
 
         logger.info("LOG FINISH - saveTable");
         return new ResponseEntity(HttpStatus.OK);
