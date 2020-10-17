@@ -1,6 +1,7 @@
-package com.sgbd.sgbd.repo;
+package com.sgbd.sgbd.repo.impl;
 
 import com.sgbd.sgbd.model.Record;
+import com.sgbd.sgbd.repo.RecordRepository;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;

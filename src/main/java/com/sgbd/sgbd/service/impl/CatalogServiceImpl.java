@@ -1,7 +1,8 @@
-package com.sgbd.sgbd.service;
+package com.sgbd.sgbd.service.impl;
 
 import com.sgbd.sgbd.model.Column;
 import com.sgbd.sgbd.constants.XMLConstants;
+import com.sgbd.sgbd.service.CatalogService;
 import com.sgbd.sgbd.service.exception.ExceptionType;
 import com.sgbd.sgbd.service.exception.ServiceException;
 import org.springframework.context.annotation.Primary;
@@ -29,7 +30,7 @@ import java.util.List;
 @org.springframework.stereotype.Service
 @Primary
 @Component
-public class CatalogImpl implements CatalogService {
+public class CatalogServiceImpl implements CatalogService {
 
     public static final String FILE_NAME = "Catalog.xml";
     private DocumentBuilderFactory dbFactory;
@@ -40,7 +41,7 @@ public class CatalogImpl implements CatalogService {
     /**
      *
      */
-    public CatalogImpl() {
+    public CatalogServiceImpl() {
 
         this.loadXML();
         databasesElement = doc.getFirstChild();

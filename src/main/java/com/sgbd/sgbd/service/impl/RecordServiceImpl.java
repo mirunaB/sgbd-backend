@@ -1,7 +1,8 @@
-package com.sgbd.sgbd.service;
+package com.sgbd.sgbd.service.impl;
 
 import com.sgbd.sgbd.model.Record;
 import com.sgbd.sgbd.repo.RecordRepository;
+import com.sgbd.sgbd.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
