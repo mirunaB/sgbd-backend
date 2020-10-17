@@ -218,7 +218,7 @@ public class CatalogServiceImpl implements CatalogService {
                 isDeleted=true;
             }
         }
-
+        
 //        if (isDeleted==false){
 //            throw new ServiceException("There is no table in this database with this name ",ExceptionType.DATABASE_OR_TABLE_NOT_EXISTS,HttpStatus.BAD_REQUEST);
 //        }
