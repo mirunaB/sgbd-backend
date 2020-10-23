@@ -241,6 +241,49 @@ public class CatalogServiceImpl implements CatalogService {
 
     }
 
+    @Override
+    public List<String> getAllColumnForTable(String dbName,String tableName) {
+        List<String> allCols=new ArrayList<>();
+        NodeList tableList = doc.getElementsByTagName(XMLConstants.TABLE_TAG);
+
+        boolean isDeleted=false;
+        for(int i=0; i<tableList.getLength(); i++){
+            Element currentTable = (Element)tableList.item(i);
+            Element currentDb = (Element) currentTable.getParentNode().getParentNode();
+
+            if(currentTable.getAttribute(XMLConstants.TABLE_NAME_TAG).equals(tableName)
+                    && currentDb.getAttribute(XMLConstants.NAME_TAG).equals(dbName)) {
+                    // find table
+                NodeList attrList=currentTable.getElementsByTagName("Attribute");
+                for (int j=0;j<attrList.getLength();j++){
+                    Element elem=(Element)attrList.item(j);
+                    String nameAttr=elem.getAttribute("attributeName");
+                    allCols.add(nameAttr);
+                }
+            }
+        }
+
+
+        return allCols;
+
+    }
+
+    @Override
+    public List<String> getAllTablesForDb(String dbName) {
+        List<String> allTables=new ArrayList<>();
+        NodeList tableList = doc.getElementsByTagName(XMLConstants.TABLE_TAG);
+
+        for(int i=0; i<tableList.getLength(); i++){
+            Element currentTable = (Element)tableList.item(i);
+            Element currentDb = (Element) currentTable.getParentNode().getParentNode();
+
+            if (currentDb.getAttribute(XMLConstants.NAME_TAG).equals(dbName)) {
+               allTables.add(currentTable.getAttribute("tableName"));
+            }
+        }
+        return allTables;
+    }
+
     /**
      * Applies changes to file
      */

@@ -10,4 +10,6 @@ public interface CatalogService {
     void saveTable(String dbName, String tableName, String fileName, String rowLength, Column... columns);
     void dropTable(String dbName, String tableName);
     List<String> getAllDatabase();
+    List<String> getAllColumnForTable(String dbName,String tableName);
+    List<String> getAllTablesForDb(String dbName);
 }

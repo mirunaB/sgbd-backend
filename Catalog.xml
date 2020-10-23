@@ -1,12 +1,17 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<DataBases>
-    <DataBase name="xxss">
-        <Tables/>
-    </DataBase>
-    <DataBase name="miruna">
-        <Tables/>
-    </DataBase>
-    <DataBase name="mirun">
-        <Tables/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><DataBases>
+
+
+    <DataBase name="city">
+        <Tables>
+            <Table fileName="" rowLength="" tableName="person">
+                <Structure>
+                    <Attribute attributeName="id" isnull="false" length="0" type="Integer"/>
+                    <Attribute attributeName="name" isnull="false" length="255" type="String"/>
+                </Structure>
+                <primaryKey/>
+                <uniqueKeys/>
+                <IndexFiles/>
+            </Table>
+        <Table fileName="" rowLength="" tableName="streets"><Structure><Attribute attributeName="idS" isnull="false" length="0" type="Integer"/><Attribute attributeName="nameStr" isnull="false" length="255" type="String"/></Structure><primaryKey/><uniqueKeys/><IndexFiles/></Table></Tables>
     </DataBase>
 </DataBases>

@@ -1,5 +1,6 @@
 package com.sgbd.sgbd.api;
 
+import com.sgbd.sgbd.model.Column;
 import com.sgbd.sgbd.model.TableReq;
 import com.sgbd.sgbd.service.CatalogService;
 import com.sgbd.sgbd.service.exception.ExceptionType;
@@ -75,6 +76,30 @@ public class CatalogApi {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping(value = "/saveTable/{dbName}/{tableName}", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity saveTable(@PathVariable String dbName, @PathVariable  String tableName, @RequestBody TableReq columns){
+
+        logger.info("LOG START - saveTable");
+
+        catalogService.saveTable(dbName, tableName, null, "", columns.getCols());
+
+        logger.info("LOG FINISH - saveTable");
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping(value="/cols/{dbName}/{tableName}")
+    public List<String> getAllColsForTable(@PathVariable String dbName,@PathVariable String tableName){
+
+        logger.info("LOG START - get all cols");
+
+        List<String> allDatabase = catalogService.getAllColumnForTable(dbName,tableName);
+
+        logger.info("LOG FINISH - get all cols");
+        return allDatabase;
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value="/databases")
     public List<String> getAllDatabase(){
 
@@ -87,15 +112,15 @@ public class CatalogApi {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping(value = "/saveTable/{dbName}/{tableName}", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity saveTable(@PathVariable String dbName, @PathVariable  String tableName, @RequestBody TableReq columns){
+    @GetMapping(value="/tables/{dbName}")
+    public List<String> getAllTablesForDb(@PathVariable String dbName){
 
-        logger.info("LOG START - saveTable");
+        logger.info("LOG START - getAllTablesForDb");
 
-        catalogService.saveTable(dbName, tableName, null, "", columns.getCols());
+        List<String> allTables = catalogService.getAllTablesForDb(dbName);
 
-        logger.info("LOG FINISH - saveTable");
-        return new ResponseEntity(HttpStatus.OK);
+        logger.info("LOG FINISH - getAllTablesForDb");
+        return allTables;
     }
 
     @ExceptionHandler({ServiceException.class})
