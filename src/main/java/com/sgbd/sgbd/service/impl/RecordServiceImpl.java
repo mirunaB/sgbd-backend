@@ -1,18 +1,20 @@
 package com.sgbd.sgbd.service.impl;
 
+import com.sgbd.sgbd.constants.XMLConstants;
+import com.sgbd.sgbd.model.Column;
 import com.sgbd.sgbd.model.Record;
 import com.sgbd.sgbd.repo.RecordRepository;
 import com.sgbd.sgbd.service.RecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
-
 import java.util.Map;
 
 @org.springframework.stereotype.Service
 @Primary
 @Component
 public class RecordServiceImpl implements RecordService {
+
 
     @Autowired
     private RecordRepository recordRepository;
@@ -40,4 +42,5 @@ public class RecordServiceImpl implements RecordService {
 
         return recordRepository.findAll(dbName, tableName);
     }
+
 }

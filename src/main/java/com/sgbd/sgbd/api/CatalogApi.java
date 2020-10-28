@@ -89,11 +89,26 @@ public class CatalogApi {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value="/cols/{dbName}/{tableName}")
-    public List<String> getAllColsForTable(@PathVariable String dbName,@PathVariable String tableName){
+    public List<String> getAllNameColsForTable(@PathVariable String dbName,@PathVariable String tableName){
+
+       /** get all cols' name for a table*/
+
+        logger.info("LOG START - get all name cols");
+
+        List<String> allDatabase = catalogService.getAllColumnNameForTable(dbName,tableName);
+
+        logger.info("LOG FINISH - get all name cols");
+        return allDatabase;
+    }
+
+    //get all cols for a table
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping(value="/allCols/{dbName}/{tableName}")
+    public List<Column> getAllColsForTable(@PathVariable String dbName,@PathVariable String tableName){
 
         logger.info("LOG START - get all cols");
 
-        List<String> allDatabase = catalogService.getAllColumnForTable(dbName,tableName);
+        List<Column> allDatabase = catalogService.getAllColumnForTable(dbName,tableName);
 
         logger.info("LOG FINISH - get all cols");
         return allDatabase;

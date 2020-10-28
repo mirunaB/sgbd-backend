@@ -15,13 +15,17 @@ import java.util.stream.Collectors;
 @ToString
 public class Record implements Serializable {
 
-    private Map<Column, String> row;
+//    private Map<Column, String> row;
+//
+//    public Set<String> getPrimaryKeySet() {
+//
+//        return row.keySet().stream()
+//                .filter(column -> column.isPrimaryKey())
+//                .map(column -> column.attributeName)
+//                .collect(Collectors.toSet());
+//    }
 
-    public Set<String> getPrimaryKeySet() {
+    private Map<String,String> row;
 
-        return row.keySet().stream()
-                .filter(column -> column.isPrimaryKey())
-                .map(column -> column.attributeName)
-                .collect(Collectors.toSet());
-    }
+
 }

@@ -24,6 +24,7 @@ public class RecordApi {
     @Autowired
     private RecordService recordService;
 
+
     @RequestMapping(value = "/test", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity test() {
 
@@ -31,8 +32,8 @@ public class RecordApi {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping(value = "/saveRecord/{dbName}/{tableName}/{record}")
-    public ResponseEntity saveRecord(@PathVariable String dbName, @PathVariable String tableName, Record record) {
+    @PostMapping(value = "/saveRecord/{dbName}/{tableName}", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity saveRecord(@PathVariable String dbName, @PathVariable String tableName, @RequestBody Record record) {
 
         logger.info("LOG START - saveRecord");
 
@@ -43,8 +44,8 @@ public class RecordApi {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @DeleteMapping(value = "/deleteRecord/{dbName}/{tableName}/{record}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity deleteRecord(@PathVariable String dbName, @PathVariable String tableName, Record record) {
+    @DeleteMapping(value = "/deleteRecord/{dbName}/{tableName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity deleteRecord(@PathVariable String dbName, @PathVariable String tableName, @RequestBody Record record) {
 
         logger.info("LOG START - deleteRecord");
 
@@ -55,7 +56,7 @@ public class RecordApi {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @DeleteMapping(value = "/updateRecord/{dbName}/{tableName}/{record}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/updateRecord/{dbName}/{tableName}/{record}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity updateRecord(@PathVariable String dbName, @PathVariable String tableName, @PathVariable Record record){
 
         logger.info("LOG START - updateRecord");
@@ -67,16 +68,18 @@ public class RecordApi {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @DeleteMapping(value = "/findAll/{dbName}/{tableName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/findAll/{dbName}/{tableName}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map> findAll(@PathVariable String dbName, @PathVariable String tableName){
 
-        logger.info("LOG START - updateRecord");
+        logger.info("LOG START - find all");
 
         Map result = recordService.findAll(dbName, tableName);
 
-        logger.info("LOG FINISH - updateRecord");
+        logger.info("LOG FINISH - find all");
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+
 
     @ExceptionHandler({ServiceException.class})
     public ResponseEntity<ExceptionType> handleException(ServiceException exception) {

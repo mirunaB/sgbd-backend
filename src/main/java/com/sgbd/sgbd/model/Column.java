@@ -20,9 +20,9 @@ public class Column implements Serializable {
     boolean isUniqueKey;
 
     //index props: TODO: consider moving this to an other class
-    boolean hasIndex;
-    String indexName;
-    int keyLength;
-    boolean isUnique;
-    String indexType;
+//    boolean hasIndex;
+//    String indexName;
+//    int keyLength;
+//    boolean isUnique;
+//    String indexType;
 }

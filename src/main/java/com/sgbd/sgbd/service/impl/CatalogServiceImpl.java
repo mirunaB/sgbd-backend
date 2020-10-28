@@ -160,23 +160,23 @@ public class CatalogServiceImpl implements CatalogService {
                 uniqueKeysElement.appendChild(uniqueAttributeElement);
             }
 
-            if(column.isHasIndex()){ // TODO: can indexes be composite? if so in this if we have to add an other if so we don't duplicate <IndexFile> but group them under same tag
-                Element indexFileElement = doc.createElement(XMLConstants.INDEX_FILES_TAG);
-                indexFileElement.setAttribute(XMLConstants.INDEX_NAME_TAG, column.getIndexName());
-                indexFileElement.setAttribute(XMLConstants.KEY_LENGTH_TAG, String.valueOf(column.getKeyLength()));
-                indexFileElement.setAttribute(XMLConstants.IS_UNIQUE_TAG, String.valueOf(column.isUnique()));
-                indexFileElement.setAttribute(XMLConstants.INDEX_TYPE_TAG, column.getIndexType());
-
-                indexFilesElement.appendChild(indexFileElement);
-
-                Element indexAttributes = doc.createElement(XMLConstants.INDEX_ATTRIBUTES_TAG);
-                indexFileElement.appendChild(indexAttributes);
-
-                Element iAttributeElement = doc.createElement(XMLConstants.I_ATTRIBUTE_TAG);
-                iAttributeElement.setTextContent(column.getIndexName());
-
-                indexAttributes.appendChild(iAttributeElement);
-            }
+//            if(column.isHasIndex()){ // TODO: can indexes be composite? if so in this if we have to add an other if so we don't duplicate <IndexFile> but group them under same tag
+//                Element indexFileElement = doc.createElement(XMLConstants.INDEX_FILES_TAG);
+//                indexFileElement.setAttribute(XMLConstants.INDEX_NAME_TAG, column.getIndexName());
+//                indexFileElement.setAttribute(XMLConstants.KEY_LENGTH_TAG, String.valueOf(column.getKeyLength()));
+//                indexFileElement.setAttribute(XMLConstants.IS_UNIQUE_TAG, String.valueOf(column.isUnique()));
+//                indexFileElement.setAttribute(XMLConstants.INDEX_TYPE_TAG, column.getIndexType());
+//
+//                indexFilesElement.appendChild(indexFileElement);
+//
+//                Element indexAttributes = doc.createElement(XMLConstants.INDEX_ATTRIBUTES_TAG);
+//                indexFileElement.appendChild(indexAttributes);
+//
+//                Element iAttributeElement = doc.createElement(XMLConstants.I_ATTRIBUTE_TAG);
+//                iAttributeElement.setTextContent(column.getIndexName());
+//
+//                indexAttributes.appendChild(iAttributeElement);
+//            }
         }
 
         Element tableElement = doc.createElement(XMLConstants.TABLE_TAG);
@@ -242,11 +242,10 @@ public class CatalogServiceImpl implements CatalogService {
     }
 
     @Override
-    public List<String> getAllColumnForTable(String dbName,String tableName) {
+    public List<String> getAllColumnNameForTable(String dbName,String tableName) {
         List<String> allCols=new ArrayList<>();
         NodeList tableList = doc.getElementsByTagName(XMLConstants.TABLE_TAG);
 
-        boolean isDeleted=false;
         for(int i=0; i<tableList.getLength(); i++){
             Element currentTable = (Element)tableList.item(i);
             Element currentDb = (Element) currentTable.getParentNode().getParentNode();
@@ -266,6 +265,44 @@ public class CatalogServiceImpl implements CatalogService {
 
         return allCols;
 
+    }
+
+    @Override
+    public List<Column> getAllColumnForTable(String dbName, String tableName) {
+        List<Column> allCols=new ArrayList<>();
+        NodeList tableList = doc.getElementsByTagName(XMLConstants.TABLE_TAG);
+
+        for(int i=0; i<tableList.getLength(); i++){
+            Element currentTable = (Element)tableList.item(i);
+            Element currentDb = (Element) currentTable.getParentNode().getParentNode();
+
+            if(currentTable.getAttribute(XMLConstants.TABLE_NAME_TAG).equals(tableName)
+                    && currentDb.getAttribute(XMLConstants.NAME_TAG).equals(dbName)) {
+                // find table
+                NodeList attrList=currentTable.getElementsByTagName(XMLConstants.ATTRIBUTE_TAG);
+                for (int j=0;j<attrList.getLength();j++){
+                    Element elem=(Element)attrList.item(j);
+                    String nameAttr=elem.getAttribute(XMLConstants.ATTRIBUTE_NAME_TAG);
+                    String typeAttr=elem.getAttribute(XMLConstants.TYPE_TAG);
+                    Integer length= Integer.valueOf(elem.getAttribute(XMLConstants.LENGTH_TAG));
+
+                    boolean isNull= Boolean.parseBoolean(elem.getAttribute(XMLConstants.IS_NULL_TAG));
+                    boolean isPrimaryKey=false;
+                    if (elem.hasAttribute(XMLConstants.PRIMARY_KEY_TAG)){
+                        isPrimaryKey=true;
+                    }
+                    boolean isUnique=false;
+                    if (elem.hasAttribute(XMLConstants.IS_UNIQUE_TAG)){
+                        isUnique=true;
+                    }
+                    Column col=new Column(nameAttr,typeAttr,length,isNull,isPrimaryKey,isUnique);
+
+                    allCols.add(col);
+                }
+            }
+        }
+
+        return allCols;
     }
 
     @Override

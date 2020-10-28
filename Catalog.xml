@@ -12,6 +12,16 @@
                 <uniqueKeys/>
                 <IndexFiles/>
             </Table>
-        <Table fileName="" rowLength="" tableName="streets"><Structure><Attribute attributeName="idS" isnull="false" length="0" type="Integer"/><Attribute attributeName="nameStr" isnull="false" length="255" type="String"/></Structure><primaryKey/><uniqueKeys/><IndexFiles/></Table></Tables>
+            
+            <Table fileName="" rowLength="" tableName="restaurants">
+                <Structure>
+                    <Attribute attributeName="id" isnull="false" length="0" type="Integer"/>
+                    <Attribute attributeName="nameS" isnull="false" length="255" type="String"/>
+                </Structure>
+                <primaryKey/>
+                <uniqueKeys/>
+                <IndexFiles/>
+            </Table>
+        </Tables>
     </DataBase>
-</DataBases>
+<DataBase name="facultate"><Tables/></DataBase></DataBases>

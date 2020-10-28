@@ -11,4 +11,5 @@ public interface RecordService {
     void deleteRecord(String dbName, String tableName, Record record);
     void updateRecord(String dbName, String tableName, Record record);
     Map findAll(String dbName, String tableName);
+
 }

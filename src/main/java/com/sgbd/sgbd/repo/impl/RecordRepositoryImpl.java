@@ -25,7 +25,9 @@ public class RecordRepositoryImpl implements RecordRepository {
 
     @Override
     public void save(String dbName, String tableName, Record record) {
-        hashOperations.put(dbName +  DATABASE_TABLE_SEPARATOR + tableName, record.getPrimaryKeySet(), record);
+        String key= record.getRow().entrySet().iterator().next().getKey();
+        String value=record.getRow().get(key);
+        hashOperations.put(dbName +  DATABASE_TABLE_SEPARATOR + tableName,key, value);
     }
 
     @Override
@@ -45,6 +47,8 @@ public class RecordRepositoryImpl implements RecordRepository {
 
     @Override
     public void delete(String dbName, String tableName, Record record) {
-        hashOperations.delete(dbName + DATABASE_TABLE_SEPARATOR + tableName, record);
+        String key= record.getRow().entrySet().iterator().next().getKey();
+        String value=record.getRow().get(key);
+        hashOperations.delete(dbName + DATABASE_TABLE_SEPARATOR + tableName, key,value);
     }
 }
