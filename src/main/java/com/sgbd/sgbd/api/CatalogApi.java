@@ -1,6 +1,7 @@
 package com.sgbd.sgbd.api;
 
 import com.sgbd.sgbd.model.Column;
+import com.sgbd.sgbd.model.Index;
 import com.sgbd.sgbd.model.TableReq;
 import com.sgbd.sgbd.service.CatalogService;
 import com.sgbd.sgbd.service.exception.ExceptionType;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("catalog")
@@ -77,13 +79,25 @@ public class CatalogApi {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/saveTable/{dbName}/{tableName}", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity saveTable(@PathVariable String dbName, @PathVariable  String tableName, @RequestBody TableReq columns){
+    public ResponseEntity saveTable(@PathVariable String dbName, @PathVariable  String tableName, @RequestBody Column[] columns){
 
         logger.info("LOG START - saveTable");
 
-        catalogService.saveTable(dbName, tableName, null, "", columns.getCols());
+        catalogService.saveTable(dbName, tableName, null, "", columns);
 
         logger.info("LOG FINISH - saveTable");
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping(value = "/addIndex/{dbName}/{tableName}", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity addIndex(@PathVariable String dbName, @PathVariable  String tableName, @RequestBody Index index){
+
+        logger.info("LOG START - add Index");
+
+        catalogService.addIndex(dbName, tableName,index);
+
+        logger.info("LOG FINISH - Add index");
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -133,6 +147,18 @@ public class CatalogApi {
         logger.info("LOG START - getAllTablesForDb");
 
         List<String> allTables = catalogService.getAllTablesForDb(dbName);
+
+        logger.info("LOG FINISH - getAllTablesForDb");
+        return allTables;
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping(value="/tables/{dbName}/{tableName}")
+    public Map<String,String> getTablesForDb(@PathVariable String dbName, @PathVariable String tableName){
+
+        logger.info("LOG START - getAllTablesForDb");
+
+        Map<String,String> allTables = catalogService.getAnotherTablesForDb(dbName,tableName);
 
         logger.info("LOG FINISH - getAllTablesForDb");
         return allTables;

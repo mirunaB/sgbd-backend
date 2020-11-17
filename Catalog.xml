@@ -1,27 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><DataBases>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<DataBases>
 
 
     <DataBase name="city">
-        <Tables>
-            <Table fileName="" rowLength="" tableName="person">
-                <Structure>
-                    <Attribute attributeName="id" isnull="false" length="0" type="Integer"/>
-                    <Attribute attributeName="name" isnull="false" length="255" type="String"/>
-                </Structure>
-                <primaryKey/>
-                <uniqueKeys/>
-                <IndexFiles/>
-            </Table>
-            
-            <Table fileName="" rowLength="" tableName="restaurants">
-                <Structure>
-                    <Attribute attributeName="id" isnull="false" length="0" type="Integer"/>
-                    <Attribute attributeName="nameS" isnull="false" length="255" type="String"/>
-                </Structure>
-                <primaryKey/>
-                <uniqueKeys/>
-                <IndexFiles/>
-            </Table>
-        </Tables>
+        <Tables></Tables>
     </DataBase>
-<DataBase name="facultate"><Tables/></DataBase></DataBases>
+    <DataBase name="facultate">
+        <Tables/>
+    </DataBase>
+</DataBases>
