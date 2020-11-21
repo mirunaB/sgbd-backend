@@ -51,7 +51,7 @@ public class RecordApi {
 
         }
         catch (ServiceException ex){
-            throw new ServiceException("unique",ExceptionType.DATABASE_OR_TABLE_NOT_EXISTS,HttpStatus.BAD_REQUEST);
+            throw new ServiceException("unique",ExceptionType.FIELD_MUST_BE_UNIQUE,HttpStatus.BAD_REQUEST);
 
         }
         //checkInsert(dbName,tableName,record);
