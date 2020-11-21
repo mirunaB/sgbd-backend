@@ -2,7 +2,6 @@ package com.sgbd.sgbd.api;
 
 import com.sgbd.sgbd.model.Column;
 import com.sgbd.sgbd.model.Index;
-import com.sgbd.sgbd.model.TableReq;
 import com.sgbd.sgbd.service.CatalogService;
 import com.sgbd.sgbd.service.RecordService;
 import com.sgbd.sgbd.service.exception.ExceptionType;

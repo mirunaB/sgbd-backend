@@ -1,7 +1,6 @@
 package com.sgbd.sgbd.api;
 
 import com.sgbd.sgbd.model.Column;
-import com.sgbd.sgbd.model.Pair;
 import com.sgbd.sgbd.model.Record;
 import com.sgbd.sgbd.service.CatalogService;
 import com.sgbd.sgbd.service.RecordService;
@@ -16,7 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -48,14 +47,11 @@ public class RecordApi {
         try {
             List<Column>cols=catalogService.getAllColumnForTable(dbName,tableName);
             recordService.saveRecord(dbName, tableName, record,cols);
-
         }
         catch (ServiceException ex){
             throw new ServiceException("unique",ExceptionType.FIELD_MUST_BE_UNIQUE,HttpStatus.BAD_REQUEST);
 
         }
-        //checkInsert(dbName,tableName,record);
-
         logger.info("LOG FINISH - saveRecord");
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -80,6 +76,14 @@ public class RecordApi {
 
     public boolean checkDel(String dbName,String tableName,Record record){
         Map<String,String> allTables=catalogService.getAnotherTablesForDb(dbName,tableName);
+
+        Map<String,String> recordMap=new HashMap<>();
+        String keyRec=record.getRow().keySet().toArray()[0].toString();
+        String valueRec=recordService.findRecordById(keyRec, dbName+"_"+tableName);
+        recordMap.put(keyRec,valueRec);
+
+        Record recordToBeDeleted = new Record(recordMap);
+
         for (String table:allTables.keySet()){
             List<Column> cols=catalogService.getAllColumnForTable(dbName,table);
             for (int i=0;i<cols.size();i++){
@@ -87,9 +91,8 @@ public class RecordApi {
                 if (fks!=null){
                     for (String key:fks.keySet()){
                         if (fks.get(key).contains(tableName)){
-                            System.out.println("!!!!!!!!!"+cols.get(i).getAttributeName()+"_"+dbName+"_"+table+cols.get(i).getAttributeName()+"Ind");
                             Map<String,String> records=recordService.findAllRecords(dbName+"_"+table+cols.get(i).getAttributeName()+"Ind");
-                            if (records.containsKey(record.getRow().keySet())){
+                            if (records.containsKey(recordToBeDeleted.getRow().keySet())){
                                 return false;
                             }
                         }
