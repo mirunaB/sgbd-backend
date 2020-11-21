@@ -1,6 +1,9 @@
 package com.sgbd.sgbd.api;
 
+import com.sgbd.sgbd.model.Column;
+import com.sgbd.sgbd.model.Pair;
 import com.sgbd.sgbd.model.Record;
+import com.sgbd.sgbd.service.CatalogService;
 import com.sgbd.sgbd.service.RecordService;
 import com.sgbd.sgbd.service.exception.ExceptionType;
 import com.sgbd.sgbd.service.exception.ServiceException;
@@ -13,6 +16,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -23,6 +28,9 @@ public class RecordApi {
 
     @Autowired
     private RecordService recordService;
+
+    @Autowired
+    private CatalogService catalogService;
 
 
     @RequestMapping(value = "/test", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -37,7 +45,16 @@ public class RecordApi {
 
         logger.info("LOG START - saveRecord");
 
-        recordService.saveRecord(dbName, tableName, record);
+        try {
+            List<Column>cols=catalogService.getAllColumnForTable(dbName,tableName);
+            recordService.saveRecord(dbName, tableName, record,cols);
+
+        }
+        catch (ServiceException ex){
+            throw new ServiceException("unique",ExceptionType.DATABASE_OR_TABLE_NOT_EXISTS,HttpStatus.BAD_REQUEST);
+
+        }
+        //checkInsert(dbName,tableName,record);
 
         logger.info("LOG FINISH - saveRecord");
         return new ResponseEntity(HttpStatus.OK);
@@ -49,11 +66,41 @@ public class RecordApi {
 
         logger.info("LOG START - deleteRecord");
 
-        recordService.deleteRecord(dbName, tableName, record);
+
+        if (checkDel(dbName,tableName, record)==true){
+            recordService.deleteRecord(dbName, tableName, record);
+        }
+        else{
+            throw new ServiceException("Cannot delete this record",ExceptionType.ERROR,HttpStatus.BAD_REQUEST);
+        }
 
         logger.info("LOG FINISH - deleteRecord");
         return new ResponseEntity(HttpStatus.OK);
     }
+
+    public boolean checkDel(String dbName,String tableName,Record record){
+        Map<String,String> allTables=catalogService.getAnotherTablesForDb(dbName,tableName);
+        for (String table:allTables.keySet()){
+            List<Column> cols=catalogService.getAllColumnForTable(dbName,table);
+            for (int i=0;i<cols.size();i++){
+                Map<String,String> fks=cols.get(i).getFKeys();
+                if (fks!=null){
+                    for (String key:fks.keySet()){
+                        if (fks.get(key).contains(tableName)){
+                            System.out.println("!!!!!!!!!"+cols.get(i).getAttributeName()+"_"+dbName+"_"+table+cols.get(i).getAttributeName()+"Ind");
+                            Map<String,String> records=recordService.findAllRecords(dbName+"_"+table+cols.get(i).getAttributeName()+"Ind");
+                            if (records.containsKey(record.getRow().keySet())){
+                                return false;
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+        return true;
+    }
+
 
     @CrossOrigin(origins = "http://localhost:3000")
     @PutMapping(value = "/updateRecord/{dbName}/{tableName}/{record}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -74,6 +121,18 @@ public class RecordApi {
         logger.info("LOG START - find all");
 
         Map result = recordService.findAll(dbName, tableName);
+
+        logger.info("LOG FINISH - find all");
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping(value = "/findAllRec/{dbName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map> findAllRecords(@PathVariable String dbName){
+
+        logger.info("LOG START - find all");
+
+        Map result = recordService.findAllRecords(dbName);
 
         logger.info("LOG FINISH - find all");
         return new ResponseEntity<>(result, HttpStatus.OK);

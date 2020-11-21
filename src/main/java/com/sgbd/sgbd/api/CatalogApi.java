@@ -4,6 +4,7 @@ import com.sgbd.sgbd.model.Column;
 import com.sgbd.sgbd.model.Index;
 import com.sgbd.sgbd.model.TableReq;
 import com.sgbd.sgbd.service.CatalogService;
+import com.sgbd.sgbd.service.RecordService;
 import com.sgbd.sgbd.service.exception.ExceptionType;
 import com.sgbd.sgbd.service.exception.ServiceException;
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +27,9 @@ public class CatalogApi {
 
     @Autowired
     private CatalogService catalogService;
+
+    @Autowired
+    private RecordService recordService;
 
     @RequestMapping(value = "/test", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity test() {
@@ -68,11 +72,12 @@ public class CatalogApi {
 
         try {
             catalogService.dropTable(nameDb, nameTable);
+            //delete all records for that table
+            recordService.deleteAllRecordsForTable(nameDb,nameTable);
         }
         catch (ServiceException ex){
             throw new ServiceException("There is no table in this database with this name ",ExceptionType.DATABASE_OR_TABLE_NOT_EXISTS,HttpStatus.BAD_REQUEST);
         }
-
         logger.info("LOG FINISH - dropDatabase");
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -84,6 +89,7 @@ public class CatalogApi {
         logger.info("LOG START - saveTable");
 
         catalogService.saveTable(dbName, tableName, null, "", columns);
+        catalogService.addIndexForTable(dbName,tableName,columns);
 
         logger.info("LOG FINISH - saveTable");
         return new ResponseEntity(HttpStatus.OK);

@@ -15,7 +15,7 @@ public class RecordRepositoryImpl implements RecordRepository {
     private RedisTemplate<String, String> redisTemplate;
     private HashOperations hashOperations;
 
-    private static final String DATABASE_TABLE_SEPARATOR = ".";
+    private static final String DATABASE_TABLE_SEPARATOR = "_";
 
     public RecordRepositoryImpl(RedisTemplate<String, String> redisTemplate) {
 
@@ -25,9 +25,16 @@ public class RecordRepositoryImpl implements RecordRepository {
 
     @Override
     public void save(String dbName, String tableName, Record record) {
-        String key= record.getRow().entrySet().iterator().next().getKey();
-        String value=record.getRow().get(key);
-        hashOperations.put(dbName +  DATABASE_TABLE_SEPARATOR + tableName,key, value);
+        String key = record.getRow().entrySet().iterator().next().getKey();
+        String value = record.getRow().get(key);
+        hashOperations.put(dbName + DATABASE_TABLE_SEPARATOR + tableName, key, value);
+    }
+
+    @Override
+    public void saveRecord(Record record, String dbTable) {
+        String key = record.getRow().entrySet().iterator().next().getKey();
+        String value = record.getRow().get(key);
+        hashOperations.put(dbTable, key, value);
     }
 
     @Override
@@ -36,8 +43,13 @@ public class RecordRepositoryImpl implements RecordRepository {
     }
 
     @Override
+    public Map<String, String> findAllRecords(String name) {
+        return hashOperations.entries(name);
+    }
+
+    @Override
     public Record findById(String dbName, String tableName, Set<String> id) {
-        return (Record)hashOperations.get(dbName + DATABASE_TABLE_SEPARATOR + tableName, id);
+        return (Record) hashOperations.get(dbName + DATABASE_TABLE_SEPARATOR + tableName, id);
     }
 
     @Override
@@ -47,8 +59,13 @@ public class RecordRepositoryImpl implements RecordRepository {
 
     @Override
     public void delete(String dbName, String tableName, Record record) {
-        String key= record.getRow().entrySet().iterator().next().getKey();
-        String value=record.getRow().get(key);
-        hashOperations.delete(dbName + DATABASE_TABLE_SEPARATOR + tableName, key,value);
+        String key = record.getRow().entrySet().iterator().next().getKey();
+        String value = record.getRow().get(key);
+        hashOperations.delete(dbName + DATABASE_TABLE_SEPARATOR + tableName, key, value);
+    }
+
+    @Override
+    public void deleteRec(String dbTableName, Record record) {
+
     }
 }

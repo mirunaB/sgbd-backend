@@ -13,6 +13,7 @@ public interface CatalogService {
     void saveTable(String dbName, String tableName, String fileName, String rowLength, Column... columns);
     void dropTable(String dbName, String tableName);
     void addIndex(String dbName, String tableName, Index index);
+    void addIndexForTable(String dbName,String tableName,Column[] columns);
     List<String> getAllDatabase();
     List<String> getAllColumnNameForTable(String dbName,String tableName);
     List<Column> getAllColumnForTable(String dbName,String tableName);

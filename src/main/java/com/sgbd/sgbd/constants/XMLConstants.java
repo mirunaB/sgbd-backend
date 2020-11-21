@@ -15,6 +15,7 @@ public class XMLConstants {
     public static final String UNIQUE_ATTRIBUTE_TAG = "UniqueAttribute";
     public static final String INDEX_FILES_TAG = "IndexFiles";
     public static final String INDEX_FILE_TAG = "IndexFile";
+
     public static final String INDEX_ATTRIBUTES_TAG = "IndexAttributes";
     public static final String I_ATTRIBUTE_TAG = "IAttribute";
     public static final String FOREIGN_KEYS_TAG = "foreignKeys";
@@ -34,4 +35,6 @@ public class XMLConstants {
     public static final String KEY_LENGTH_TAG = "keyLength";
     public static final String IS_UNIQUE_TAG = "isUnique";
     public static final String INDEX_TYPE_TAG = "indexType";
+    public static final String INDEX_FILE_NAME = "indexFileName";
+
 }
