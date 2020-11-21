@@ -6,8 +6,9 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 public class RecordRepositoryImpl implements RecordRepository {
@@ -67,5 +68,67 @@ public class RecordRepositoryImpl implements RecordRepository {
     @Override
     public void deleteRec(String dbTableName, Record record) {
 
+    }
+
+    private boolean checkCondition(Map.Entry<String, String> entry, List<String> condArr){
+
+        String[] tokens = entry.getValue().split("#");
+        int colIndex = Integer.valueOf(tokens[0]);
+
+        for (String condition: condArr) {
+            String[] condTokens = condition.split("#");
+            int condTokenIndex = Integer.valueOf(condTokens[0]);
+            String condTokensValue = condTokens[1];
+
+            if(condTokenIndex == 0) { // we compare to key
+                if(entry.getKey().equals(condTokensValue)) {
+                    return false;
+                }
+            }
+            else {
+                String value = tokens[condTokenIndex-1];
+                if( !value.equals(condTokensValue)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public List<String> select(String dbName, String tableName, List<String> condition, List<Integer> columns) {
+
+        Map<String, String> allRecords = this.findAllRecords(dbName + DATABASE_TABLE_SEPARATOR + tableName);
+
+        List<Map.Entry<String, String>> collect = allRecords.entrySet().stream()
+                .filter(entry -> checkCondition(entry, condition))
+                .collect(Collectors.toList());
+
+        int debug = 1;
+
+        List<String> result = new ArrayList<>();
+        for (Map.Entry<String, String> recordMap: collect) {
+
+            String key = recordMap.getKey();
+            String value = recordMap.getValue();
+            String []tokens = value.split("#");
+
+            String record = "";
+
+            for (int col: columns) {
+                if(col == 0){
+                    record+= key + "#";
+                }
+                else{
+                    record+=tokens[col-1];
+                }
+            }
+
+            result.add(record);
+        }
+
+        // let's filter only desired columns for each record
+        return result;
     }
 }

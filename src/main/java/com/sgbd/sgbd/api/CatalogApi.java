@@ -139,6 +139,15 @@ public class CatalogApi {
     public List<String> getAllDatabase(){
 
         logger.info("LOG START - getAllDatabases");
+        String dbName = "facultate";
+        String tableName = "cursuri";
+        String condition = "nume=nume";
+        String[] columns = new String[2];
+        columns[0] = "id";
+        columns[1] = "nume";
+
+        // TODO: delete this; testing
+        List<String> result = recordService.select(dbName, tableName, condition, columns);
 
         List<String> allDatabase = catalogService.getAllDatabase();
 

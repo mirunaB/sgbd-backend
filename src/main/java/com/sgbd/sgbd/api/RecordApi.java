@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
 @RequestMapping("record")
 public class RecordApi {
@@ -144,5 +145,24 @@ public class RecordApi {
     public ResponseEntity<ExceptionType> handleException(ServiceException exception) {
 
         return new ResponseEntity<>(exception.getType(), new HttpHeaders(), exception.getHttpStatus());
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @PostMapping(value = "/select/{dbName}/{tableName}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity select(@RequestBody String dbName, @RequestBody String tableName, @RequestBody String condition, @RequestBody String[] columns){
+
+        // TODO: mock up bcause of stupid cors policy
+        dbName = "facultate";
+        tableName = "cursuri";
+        condition = "nume=nume";
+        columns[0] = "id";
+        columns[1] = "nume";
+
+        logger.info("LOG START - select");
+
+        List<String> result = recordService.select(dbName, tableName, condition, columns);
+
+        logger.info("LOG FINISH - select");
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 }

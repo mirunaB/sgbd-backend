@@ -16,4 +16,6 @@ public interface RecordService {
     Map<String,String> findAllRecords(String name);
 
     void deleteAllRecordsForTable(String dbName,String tableName);
+
+    List<String> select(String dbName, String tableName, String condition, String[] columns);
 }

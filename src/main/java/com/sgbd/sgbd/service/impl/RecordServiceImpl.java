@@ -26,6 +26,9 @@ public class RecordServiceImpl implements RecordService {
     @Autowired
     private RecordRepository recordRepository;
 
+    @Autowired
+    private CatalogServiceImpl catalogService;
+
     @Override
     public void saveRecord(String dbName, String tableName, Record record, List<Column> cols) {
 
@@ -139,5 +142,52 @@ public class RecordServiceImpl implements RecordService {
             r.setRow(row);
             deleteRecord(dbName,tableName,r);
         });
+    }
+
+    private int findColumnIndexInTable(String searchedColumn, String dbName, String tableName){
+
+        List<Column> cols = catalogService.getAllColumnForTable(dbName,tableName);
+
+        for(int j=0; j<cols.size(); j++){
+            if(searchedColumn.equals(cols.get(j).getAttributeName())){
+                return j;
+            }
+        }
+
+        return -1;
+    }
+
+    @Override
+    public List<String> select(String dbName, String tableName, String condition, String[] columns) {
+
+        // let's translate $columns into indexes using $cols; in repo we store them as col1#col2#col3... so if we send an array of numbers
+        // we can split by # and select desired columns
+        List<Integer> colsIndex = new ArrayList<>();
+        for (int i=0; i<columns.length; i++){
+
+            int index = findColumnIndexInTable(columns[i], dbName, tableName);
+            if(index != -1){
+                colsIndex.add(index);
+            }
+            else{
+                // TODO: raise an exception; invalid column name
+            }
+        }
+
+        // let's do same thing for condition
+        List<String> conditions = new ArrayList<>();
+
+        String[] tokens = condition.split("AND");
+        for (String cond: tokens) {
+            // i assume this cond looks like colName=value
+            String[] condTokens = cond.split("=");
+            String colummName = condTokens[0];
+            String value = condTokens[1];
+
+            int columnIndex = findColumnIndexInTable(colummName, dbName, tableName);
+            conditions.add(columnIndex + "#" + value);
+        }
+
+        return recordRepository.select(dbName, tableName, conditions, colsIndex);
     }
 }

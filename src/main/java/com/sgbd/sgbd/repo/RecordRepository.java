@@ -2,6 +2,7 @@ package com.sgbd.sgbd.repo;
 
 import com.sgbd.sgbd.model.Record;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,4 +17,6 @@ public interface RecordRepository {
     void update(String dbName, String tableName, Record record);
     void delete(String dbName, String tableName, Record record);
     void deleteRec(String dbTableName,Record record);
+
+    List select(String dbName, String tableName, List<String> condition, List<Integer> columns);
 }
