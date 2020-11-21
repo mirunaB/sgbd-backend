@@ -14,6 +14,7 @@ public interface RecordRepository {
     Map findAll(String dbName, String tableName);
     Map<String,String> findAllRecords(String name);
     Record findById(String dbName, String tableName, Set<String> id);
+    String findRecordById(String id, String databaseTableNames) ;
     void update(String dbName, String tableName, Record record);
     void delete(String dbName, String tableName, Record record);
     void deleteRec(String dbTableName,Record record);

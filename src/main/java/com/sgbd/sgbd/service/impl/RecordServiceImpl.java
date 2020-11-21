@@ -132,6 +132,11 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
+    public String findRecordById(String id, String databaseTableNames) {
+       return recordRepository.findRecordById(id,databaseTableNames);
+    }
+
+    @Override
     public void deleteAllRecordsForTable(String dbName, String tableName) {
         Map<String,String> mymap=new HashMap();
         mymap=findAll(dbName,tableName);

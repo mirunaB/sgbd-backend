@@ -54,6 +54,11 @@ public class RecordRepositoryImpl implements RecordRepository {
     }
 
     @Override
+    public String findRecordById(String id, String databaseTableNames) {
+        return (String)hashOperations.get(databaseTableNames, id);
+    }
+
+    @Override
     public void update(String dbName, String tableName, Record record) {
         save(dbName, tableName, record);
     }

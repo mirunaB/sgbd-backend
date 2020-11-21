@@ -169,19 +169,11 @@ public class CatalogServiceImpl implements CatalogService {
                 Element uniqueAttributeElement = doc.createElement(XMLConstants.UNIQUE_ATTRIBUTE_TAG);
                 uniqueAttributeElement.setTextContent(column.getAttributeName());
                 uniqueKeysElement.appendChild(uniqueAttributeElement);
-//                List<Column> attributeList = new ArrayList<>();
-//                attributeList.add(column);
-//                Index index = new Index(column.getAttributeName() + "Ind", true, attributeList);
-//                addIndex( dbName, tableName,index);
             }
 
             if (column.getFKeys() !=null){
                 //table has fk
                 fkElem=setFkForColumn(column);
-//                List<Column> listFk=new ArrayList<>();
-//                listFk.add(column);
-//                Index index=new Index(column.getAttributeName()+"Ind",false,listFk);
-//                addIndex(dbName,tableName,index);
             }
 
         }
@@ -333,11 +325,9 @@ public class CatalogServiceImpl implements CatalogService {
             Element currentTable = (Element)tableList.item(i);
             Element currentDb = (Element) currentTable.getParentNode().getParentNode();
 
-            System.out.println("cuur table "+currentTable.getAttribute(XMLConstants.TABLE_NAME_TAG)+" "+currentDb.getAttribute(XMLConstants.NAME_TAG));
             if(currentTable.getAttribute(XMLConstants.TABLE_NAME_TAG).equals(tableName)
                     && currentDb.getAttribute(XMLConstants.NAME_TAG).equals(dbName)){
                 currentTable.appendChild(indexFilesElement);
-                System.out.println("intraaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
                 break;
             }
         }
@@ -402,12 +392,7 @@ public class CatalogServiceImpl implements CatalogService {
                 // find table
                 NodeList attrList=currentTable.getElementsByTagName(XMLConstants.ATTRIBUTE_TAG);
                 NodeList fks=currentTable.getElementsByTagName(XMLConstants.FOREIGN_KEY_TAG);
-                String typeAttr="";
-                String nameAttr="";
-                Integer length=0;
-                boolean isNull=false;
-                boolean isPrimaryKey=false;
-                boolean isUnique=false;
+
                 NodeList nodeListPk=currentTable.getElementsByTagName(XMLConstants.PRIMARY_KEY_ATTRIBUTE_TAG);
                 String pk= nodeListPk.item(0).getFirstChild().getNodeValue();
 
@@ -419,6 +404,12 @@ public class CatalogServiceImpl implements CatalogService {
                 }
 
                 for (int j=0;j<attrList.getLength();j++) {
+                    String typeAttr="";
+                    String nameAttr="";
+                    Integer length=0;
+                    boolean isNull=false;
+                    boolean isPrimaryKey=false;
+                    boolean isUnique=false;
                     Element elem = (Element) attrList.item(j);
                     nameAttr = elem.getAttribute(XMLConstants.ATTRIBUTE_NAME_TAG);
                     typeAttr = elem.getAttribute(XMLConstants.TYPE_TAG);
@@ -449,8 +440,15 @@ public class CatalogServiceImpl implements CatalogService {
                             value= value+","+nodeListRef.item(0).getFirstChild().getNodeValue();
                             mapfk.put(key,value);
                         }
-                        Column col=new Column(nameAttr,typeAttr,length,isNull,isPrimaryKey,isUnique,mapfk);
-                        allCols.add(col);
+                        if (mapfk.keySet().contains(nameAttr)){
+                            Column col=new Column(nameAttr,typeAttr,length,isNull,isPrimaryKey,isUnique,mapfk);
+                            allCols.add(col);
+                        }
+                        else{
+                            Column col=new Column(nameAttr,typeAttr,length,isNull,isPrimaryKey,isUnique,null);
+                            allCols.add(col);
+                        }
+
                     }
 
                 }
