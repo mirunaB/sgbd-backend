@@ -141,9 +141,7 @@ public class CatalogApi {
         String dbName = "facultate";
         String tableName = "cursuri";
         String condition = "nume=nume";
-        String[] columns = new String[2];
-        columns[0] = "id";
-        columns[1] = "nume";
+        String columns = "id,nume";
 
         // TODO: delete this; testing
         List<String> result = recordService.select(dbName, tableName, condition, columns);

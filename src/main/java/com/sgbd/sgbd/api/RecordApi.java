@@ -151,15 +151,15 @@ public class RecordApi {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @PostMapping(value = "/select/{dbName}/{tableName}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity select(@RequestBody String dbName, @RequestBody String tableName, @RequestBody String condition, @RequestBody String[] columns){
+    @PostMapping(value = "/select", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity select(@RequestParam("dbName") String dbName, @RequestParam("tableName") String tableName,
+                                 @RequestParam("condition") String condition, @RequestParam("columns") String columns){
 
         // TODO: mock up bcause of stupid cors policy
         dbName = "facultate";
         tableName = "cursuri";
         condition = "nume=nume";
-        columns[0] = "id";
-        columns[1] = "nume";
+        columns = "id,nume";
 
         logger.info("LOG START - select");
 

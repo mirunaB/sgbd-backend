@@ -163,14 +163,16 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public List<String> select(String dbName, String tableName, String condition, String[] columns) {
+    public List<String> select(String dbName, String tableName, String condition, String columns) {
 
         // let's translate $columns into indexes using $cols; in repo we store them as col1#col2#col3... so if we send an array of numbers
         // we can split by # and select desired columns
         List<Integer> colsIndex = new ArrayList<>();
-        for (int i=0; i<columns.length; i++){
+        String[] columnsTokens = columns.split(",");
 
-            int index = findColumnIndexInTable(columns[i], dbName, tableName);
+        for (int i=0; i<columnsTokens.length; i++){
+
+            int index = findColumnIndexInTable(columnsTokens[i], dbName, tableName);
             if(index != -1){
                 colsIndex.add(index);
             }

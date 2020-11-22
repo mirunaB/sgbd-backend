@@ -18,5 +18,5 @@ public interface RecordService {
 
     void deleteAllRecordsForTable(String dbName,String tableName);
 
-    List<String> select(String dbName, String tableName, String condition, String[] columns);
+    List<String> select(String dbName, String tableName, String condition, String columns);
 }
