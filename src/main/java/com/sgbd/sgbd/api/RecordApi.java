@@ -153,7 +153,7 @@ public class RecordApi {
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/select", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity select(@RequestParam("dbName") String dbName, @RequestParam("tableName") String tableName,
-                                 @RequestParam("condition") String condition, @RequestParam("columns") String columns){
+                                 @RequestParam("condition") String condition, @RequestParam("columns") String columns) throws Exception {
 
         /*dbName = "facultate";
         tableName = "cursuri";
