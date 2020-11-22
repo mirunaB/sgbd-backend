@@ -155,12 +155,11 @@ public class RecordApi {
     public ResponseEntity select(@RequestParam("dbName") String dbName, @RequestParam("tableName") String tableName,
                                  @RequestParam("condition") String condition, @RequestParam("columns") String columns){
 
-        // TODO: mock up bcause of stupid cors policy
-        dbName = "facultate";
+        /*dbName = "facultate";
         tableName = "cursuri";
-        condition = "nume=nume";
+        condition = "";
         columns = "id,nume";
-
+*/
         logger.info("LOG START - select");
 
         List<String> result = recordService.select(dbName, tableName, condition, columns);

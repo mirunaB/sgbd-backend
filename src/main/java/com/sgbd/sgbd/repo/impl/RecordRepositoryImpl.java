@@ -77,6 +77,9 @@ public class RecordRepositoryImpl implements RecordRepository {
 
     private boolean checkCondition(Map.Entry<String, String> entry, List<String> condArr){
 
+        if(condArr.size() == 0){
+            return true;
+        }
         String[] tokens = entry.getValue().split("#");
         int colIndex = Integer.valueOf(tokens[0]);
 
@@ -86,7 +89,7 @@ public class RecordRepositoryImpl implements RecordRepository {
             String condTokensValue = condTokens[1];
 
             if(condTokenIndex == 0) { // we compare to key
-                if(entry.getKey().equals(condTokensValue)) {
+                if(!entry.getKey().equals(condTokensValue)) {
                     return false;
                 }
             }
@@ -109,8 +112,6 @@ public class RecordRepositoryImpl implements RecordRepository {
         List<Map.Entry<String, String>> collect = allRecords.entrySet().stream()
                 .filter(entry -> checkCondition(entry, condition))
                 .collect(Collectors.toList());
-
-        int debug = 1;
 
         List<String> result = new ArrayList<>();
         for (Map.Entry<String, String> recordMap: collect) {

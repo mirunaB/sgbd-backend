@@ -185,14 +185,16 @@ public class RecordServiceImpl implements RecordService {
         List<String> conditions = new ArrayList<>();
 
         String[] tokens = condition.split("AND");
-        for (String cond: tokens) {
-            // i assume this cond looks like colName=value
-            String[] condTokens = cond.split("=");
-            String colummName = condTokens[0];
-            String value = condTokens[1];
+        if(!condition.equals("")) {
+            for (String cond : tokens) {
+                // i assume this cond looks like colName=value
+                String[] condTokens = cond.split("=");
+                String colummName = condTokens[0];
+                String value = condTokens[1];
 
-            int columnIndex = findColumnIndexInTable(colummName, dbName, tableName);
-            conditions.add(columnIndex + "#" + value);
+                int columnIndex = findColumnIndexInTable(colummName, dbName, tableName);
+                conditions.add(columnIndex + "#" + value);
+            }
         }
 
         return recordRepository.select(dbName, tableName, conditions, colsIndex);
