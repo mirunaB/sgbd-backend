@@ -113,6 +113,7 @@ public class RecordRepositoryImpl implements RecordRepository {
                 .filter(entry -> checkCondition(entry, condition))
                 .collect(Collectors.toList());
 
+        // let's filter desired columns for each record
         List<String> result = new ArrayList<>();
         for (Map.Entry<String, String> recordMap: collect) {
 
@@ -134,7 +135,6 @@ public class RecordRepositoryImpl implements RecordRepository {
             result.add(record);
         }
 
-        // let's filter only desired columns for each record
         return result;
     }
 }

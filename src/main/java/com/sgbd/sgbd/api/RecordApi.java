@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
@@ -46,8 +47,20 @@ public class RecordApi {
         logger.info("LOG START - saveRecord");
 
         try {
-            List<Column>cols=catalogService.getAllColumnForTable(dbName,tableName);
+            List<Column>cols=catalogService.getAllColumnForTable(dbName,tableName); // TODO: move this in service
             recordService.saveRecord(dbName, tableName, record,cols);
+
+
+            // i used this to populate facultate->cursuri
+            /*
+            for(int i=200; i<910; i++){
+                Map map = new HashMap();
+                map.put(String.valueOf(i), i + "#Nume" + new Random().nextInt(8));
+
+                record.setRow(map);
+
+                recordService.saveRecord(dbName, tableName, record, cols);
+            }*/
         }
         catch (ServiceException ex){
             if (ex.getMessage().equals("must be unique")){

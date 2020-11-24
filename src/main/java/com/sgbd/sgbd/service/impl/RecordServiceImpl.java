@@ -149,12 +149,12 @@ public class RecordServiceImpl implements RecordService {
         });
     }
 
-    private int findColumnIndexInTable(String searchedColumn, String dbName, String tableName){
+    private int findColumnIndexInTable(String searchedColumn, String dbName, String tableName, boolean skipAsterisk){
 
         List<Column> cols = catalogService.getAllColumnForTable(dbName,tableName);
 
         for(int j=0; j<cols.size(); j++){
-            if(searchedColumn.equals(cols.get(j).getAttributeName())){
+            if(skipAsterisk || searchedColumn.equals(cols.get(j).getAttributeName())){
                 return j;
             }
         }
@@ -170,9 +170,14 @@ public class RecordServiceImpl implements RecordService {
         List<Integer> colsIndex = new ArrayList<>();
         String[] columnsTokens = columns.split(",");
 
-        for (int i=0; i<columnsTokens.length; i++){
+        int size = columnsTokens.length;
+        if(columns.equals("*")){
+            size = catalogService.getAllColumnForTable(dbName,tableName).size();
+            columnsTokens = new String[size];
+        }
+        for (int i=0; i<size; i++){
 
-            int index = findColumnIndexInTable(columnsTokens[i], dbName, tableName);
+            int index = findColumnIndexInTable(columnsTokens[i], dbName, tableName, columns.equals("*"));
             if(index != -1){
                 colsIndex.add(index);
             }
@@ -185,14 +190,14 @@ public class RecordServiceImpl implements RecordService {
         List<String> conditions = new ArrayList<>();
 
         String[] tokens = condition.split("AND");
-        if(!condition.equals("")) {
+        if(!condition.equals("") && !condition.equals("undefined")) {
             for (String cond : tokens) {
                 // i assume this cond looks like colName=value
                 String[] condTokens = cond.split("=");
                 String colummName = condTokens[0];
                 String value = condTokens[1];
 
-                int columnIndex = findColumnIndexInTable(colummName, dbName, tableName);
+                int columnIndex = findColumnIndexInTable(colummName, dbName, tableName, columns.equals("*"));
                 conditions.add(columnIndex + "#" + value);
             }
         }
