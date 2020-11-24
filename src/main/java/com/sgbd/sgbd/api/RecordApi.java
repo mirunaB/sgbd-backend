@@ -50,7 +50,13 @@ public class RecordApi {
             recordService.saveRecord(dbName, tableName, record,cols);
         }
         catch (ServiceException ex){
-            throw new ServiceException("unique",ExceptionType.FIELD_MUST_BE_UNIQUE,HttpStatus.BAD_REQUEST);
+            if (ex.getMessage().equals("must be unique")){
+                throw new ServiceException(ex.getMessage(),ExceptionType.FIELD_MUST_BE_UNIQUE,HttpStatus.BAD_REQUEST);
+            }
+            else{
+                throw new ServiceException(ex.getMessage(),ExceptionType.FK_CONSRAINT,HttpStatus.BAD_REQUEST);
+
+            }
 
         }
         logger.info("LOG FINISH - saveRecord");
@@ -92,8 +98,10 @@ public class RecordApi {
                 if (fks!=null){
                     for (String key:fks.keySet()){
                         if (fks.get(key).contains(tableName)){
-                            Map<String,String> records=recordService.findAllRecords(dbName+"_"+table+cols.get(i).getAttributeName()+"Ind");
-                            if (records.containsKey(recordToBeDeleted.getRow().keySet())){
+                            Map<String,String> records=recordService.findAllRecords(dbName+"_"+table+"_"+cols.get(i).getAttributeName()+"Ind");
+                            System.out.println(records.size()+" !!!");
+                            System.out.println(dbName+"_"+table+cols.get(i).getAttributeName()+"Ind"+" ****");
+                            if (records.containsKey(recordToBeDeleted.getRow().keySet().toArray()[0].toString())){
                                 return false;
                             }
                         }
@@ -142,14 +150,6 @@ public class RecordApi {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-
-
-    @ExceptionHandler({ServiceException.class})
-    public ResponseEntity<ExceptionType> handleException(ServiceException exception) {
-
-        return new ResponseEntity<>(exception.getType(), new HttpHeaders(), exception.getHttpStatus());
-    }
-
     @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping(value = "/select", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity select(@RequestParam("dbName") String dbName, @RequestParam("tableName") String tableName,
@@ -167,4 +167,14 @@ public class RecordApi {
         logger.info("LOG FINISH - select");
         return new ResponseEntity(result, HttpStatus.OK);
     }
+
+
+
+    @ExceptionHandler({ServiceException.class})
+    public ResponseEntity<ExceptionType> handleException(ServiceException exception) {
+
+        return new ResponseEntity<>(exception.getType(), new HttpHeaders(), exception.getHttpStatus());
+    }
+
+
 }
