@@ -3,9 +3,12 @@ package com.sgbd.sgbd.service.impl;
 import com.sgbd.sgbd.model.Column;
 import com.sgbd.sgbd.constants.XMLConstants;
 import com.sgbd.sgbd.model.Index;
+import com.sgbd.sgbd.model.Record;
+import com.sgbd.sgbd.repo.RecordRepository;
 import com.sgbd.sgbd.service.CatalogService;
 import com.sgbd.sgbd.service.exception.ExceptionType;
 import com.sgbd.sgbd.service.exception.ServiceException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -25,17 +28,17 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @org.springframework.stereotype.Service
 @Primary
 @Component
 public class CatalogServiceImpl implements CatalogService {
+
+    @Autowired
+    private RecordRepository recordRepository;
 
     public static final String FILE_NAME = "Catalog.xml";
     private DocumentBuilderFactory dbFactory;
@@ -236,7 +239,7 @@ public class CatalogServiceImpl implements CatalogService {
         String primaryKeyIndexName = "";
 
         for (Column column:columns){
-            if (column.getIsUniqueKey()){
+            if (column.getIsUniqueKey() && !column.getIsPrimaryKey()){
                 List<Column> attributeList = new ArrayList<>();
                 attributeList.add(column);
                 Index index = new Index(column.getAttributeName() + "Ind", true, attributeList);
@@ -289,16 +292,42 @@ public class CatalogServiceImpl implements CatalogService {
     @Override
     public void addIndex(String dbName, String tableName, Index index) {
 
-        System.out.println("db "+dbName+" table "+tableName);
-
-        String fileName = index.getColumnList().stream()
-                .map(Column::getAttributeName)
-                .collect(Collectors.joining(""));
-        fileName += "_" + dbName + "_" + tableName+index.getName();
+        String fileName =dbName + "_" + tableName+"_"+index.getName();
         index.setFilename(fileName);
 
+        NodeList tableListIndex = doc.getElementsByTagName(XMLConstants.TABLE_TAG);
+        Element indexFilesElement=null;
 
-        Element indexFilesElement = doc.createElement(XMLConstants.INDEX_FILES_TAG);
+
+        for(int i=0; i<tableListIndex.getLength(); i++){
+            Element currentTableInd = (Element)tableListIndex.item(i);
+            Element currentDbInd = (Element) currentTableInd.getParentNode().getParentNode();
+
+            if(currentTableInd.getAttribute(XMLConstants.TABLE_NAME_TAG).equals(tableName)
+                    && currentDbInd.getAttribute(XMLConstants.NAME_TAG).equals(dbName)){
+                NodeList chieldNodes=currentTableInd.getChildNodes();
+                int j=0;
+                Element currentChield=null;
+                for (j=0;j<chieldNodes.getLength();j++){
+                    currentChield = (Element)chieldNodes.item(j);
+                    if (currentChield.getNodeName().equals(XMLConstants.INDEX_FILES_TAG)){
+                        break;
+                    }
+                }
+                if (j>chieldNodes.getLength()){
+                    // there is no tag INDEX_FILES
+                    indexFilesElement = doc.createElement(XMLConstants.INDEX_FILES_TAG);
+
+                }
+                else{
+                    indexFilesElement=currentChield;
+                }
+                break;
+            }
+        }
+
+
+//        Element indexFilesElement = doc.createElement(XMLConstants.INDEX_FILES_TAG);
         Element indexFileElement = doc.createElement(XMLConstants.INDEX_FILE_TAG);
         indexFileElement.setAttribute(XMLConstants.INDEX_NAME_TAG, index.getName());
         indexFileElement.setAttribute(XMLConstants.IS_UNIQUE_TAG, String.valueOf(index.getIsUnique()));
@@ -332,8 +361,79 @@ public class CatalogServiceImpl implements CatalogService {
             }
         }
 
+        List<Column> attributeList =getAllColumnForTable(dbName, tableName);
+        String name=dbName+"_"+tableName;
+        Map<String,String> recordList = recordRepository.findAllRecords(name);
+        if(recordList.size()!=0){
+            addIndexFile(fileName, attributeList, index, recordList);
+        }
+
         submitChangesToFile();
 
+    }
+
+
+    public void addIndexFile(String dbTable, List<Column> cols, Index index, Map<String,String> records){
+        List<Column> colsIndex = index.getColumnList();
+        List<Integer> attributesIndexes = new ArrayList<>();
+
+        colsIndex.forEach(attribute -> {
+            attributesIndexes.add(getPozColumn(cols, attribute));
+        });
+
+        for (String recKey:records.keySet()){
+            Record rec=new Record();
+            Map<String,String> mapRec=new HashMap<>();
+            String recValue=records.get(recKey);
+            mapRec.put(recKey,recValue);
+            rec.setRow(mapRec);
+            addRecForNotUniqueIndex(index, rec, attributesIndexes);
+        }
+    }
+
+
+    public int getPozColumn(List<Column> cols, Column col){
+        int i = 0;
+        for (i=0;i<cols.size();i++){
+            if (cols.get(i)==col){
+                break;
+            }
+        }
+        return i;
+    }
+
+    public void addRecForNotUniqueIndex(Index index, Record record, List<Integer> attributesIndexes){
+        Record recordToBeAdded = new Record();
+        String key = (String) record.getRow().keySet().toArray()[0];
+        List<String> keys = Arrays.asList(key.split("#"));
+        String value = record.getRow().get(key);
+        List<String> values = Arrays.asList(value.split(","));
+
+        List<String> fullRecord = Stream.concat(keys.stream(), values.stream())
+                .collect(Collectors.toList());
+
+        List<String> filtered = attributesIndexes.stream()
+                .map(fullRecord::get)
+                .collect(Collectors.toList());
+
+        String keyForIndex = String.join(";", filtered);
+        String valueForIndex = key;
+        Map<String, String> allRecordsFromIndex = recordRepository.findAllRecords(index.getFilename());
+        String valueForKey = allRecordsFromIndex.get(keyForIndex);
+        if(valueForKey == null){
+            //??????????
+            Map<String,String> map=new HashMap<>();
+            map.put(keyForIndex,valueForIndex);
+            recordToBeAdded.setRow(map);
+        }
+        else{
+            String valueRec=valueForKey + "#" + key;
+            Map<String,String> map=new HashMap<>();
+            map.put(keyForIndex,valueRec);
+            recordToBeAdded.setRow(map);
+        }
+
+        recordRepository.saveRecord(recordToBeAdded, index.getFilename());
     }
 
     /**get all databases*/

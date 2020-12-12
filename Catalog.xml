@@ -33,6 +33,13 @@
                         </IndexAttributes>
                     </IndexFiles>
                 </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="name_city_streetsindexS" indexName="indexS" indexType="" isUnique="true">
+                        <IndexAttributes>
+                            <IAttribute>name</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
             </Table>
             <Table fileName="" rowLength="" tableName="houses">
                 <Structure>
@@ -64,8 +71,72 @@
             </Table>
 
 
-            
-            
+            <Table fileName="" rowLength="" tableName="test1">
+                <Structure>
+                    <Attribute attributeName="id" isnull="false" length="0" type="Integer"/>
+                    <Attribute attributeName="name" isnull="false" length="16" type="String"/>
+                    <Attribute attributeName="fk" isnull="false" length="0" type=""/>
+                </Structure>
+                <primaryKey>
+                    <pkAttribute>id</pkAttribute>
+                </primaryKey>
+                <uniqueKeys>
+                    <UniqueAttribute>id</UniqueAttribute>
+                    <UniqueAttribute>name</UniqueAttribute>
+                </uniqueKeys>
+                <foreignKeys>
+                    <foreignKey>
+                        <fkAttribute>fk</fkAttribute>
+                        <references>
+                            <refTable>streets</refTable>
+                            <refAttribute>id</refAttribute>
+                        </references>
+                    </foreignKey>
+                </foreignKeys>
+                <IndexFiles/>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_city_test1idInd" indexName="idInd" indexType="" isUnique="true">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_city_test1idInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="name_city_test1nameInd" indexName="nameInd" indexType="" isUnique="true">
+                        <IndexAttributes>
+                            <IAttribute>name</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_city_test1idInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="fk_city_test1fkInd" indexName="fkInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>fk</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_city_test1idInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+            </Table>
         </Tables>
 
     </DataBase>
@@ -138,6 +209,324 @@
                 <IndexFiles/>
             </Table>
 
-        <Table fileName="" rowLength="" tableName="par2"><Structure><Attribute attributeName="id" isnull="false" length="0" type="Integer"/><Attribute attributeName="nume" isnull="false" length="255" type="String"/><Attribute attributeName="prenume" isnull="false" length="255" type="String"/></Structure><primaryKey><pkAttribute>id</pkAttribute></primaryKey><uniqueKeys><UniqueAttribute>id</UniqueAttribute></uniqueKeys><IndexFiles/><IndexFiles><IndexFile indexFileName="id_facultate_par2idInd" indexName="idInd" indexType="" isUnique="true"><IndexAttributes><IAttribute>id</IAttribute></IndexAttributes></IndexFile></IndexFiles><IndexFiles><IndexFile indexFileName="id_facultate_par2idInd" indexName="idInd" indexType="" isUnique="false"><IndexAttributes><IAttribute>id</IAttribute></IndexAttributes></IndexFile></IndexFiles><IndexFiles><IndexFile indexFileName="id_facultate_par2idInd" indexName="idInd" indexType="" isUnique="false"><IndexAttributes><IAttribute>id</IAttribute></IndexAttributes></IndexFile></IndexFiles><IndexFiles><IndexFile indexFileName="id_facultate_par2idInd" indexName="idInd" indexType="" isUnique="false"><IndexAttributes><IAttribute>id</IAttribute></IndexAttributes></IndexFile></IndexFiles></Table><Table fileName="" rowLength="" tableName="cop2"><Structure><Attribute attributeName="id" isnull="false" length="0" type="Integer"/><Attribute attributeName="email" isnull="false" length="255" type="String"/><Attribute attributeName="fkP" isnull="false" length="0" type="Integer"/></Structure><primaryKey><pkAttribute>id</pkAttribute></primaryKey><uniqueKeys><UniqueAttribute>id</UniqueAttribute><UniqueAttribute>email</UniqueAttribute></uniqueKeys><foreignKeys><foreignKey><fkAttribute>fkP</fkAttribute><references><refTable>par2</refTable><refAttribute>id</refAttribute></references></foreignKey></foreignKeys><IndexFiles/><IndexFiles><IndexFile indexFileName="id_facultate_cop2idInd" indexName="idInd" indexType="" isUnique="true"><IndexAttributes><IAttribute>id</IAttribute></IndexAttributes></IndexFile></IndexFiles><IndexFiles><IndexFile indexFileName="id_facultate_cop2idInd" indexName="idInd" indexType="" isUnique="false"><IndexAttributes><IAttribute>id</IAttribute></IndexAttributes></IndexFile></IndexFiles><IndexFiles><IndexFile indexFileName="email_facultate_cop2emailInd" indexName="emailInd" indexType="" isUnique="true"><IndexAttributes><IAttribute>email</IAttribute></IndexAttributes></IndexFile></IndexFiles><IndexFiles><IndexFile indexFileName="id_facultate_cop2idInd" indexName="idInd" indexType="" isUnique="false"><IndexAttributes><IAttribute>id</IAttribute></IndexAttributes></IndexFile></IndexFiles><IndexFiles><IndexFile indexFileName="fkP_facultate_cop2fkPInd" indexName="fkPInd" indexType="" isUnique="false"><IndexAttributes><IAttribute>fkP</IAttribute></IndexAttributes></IndexFile></IndexFiles><IndexFiles><IndexFile indexFileName="id_facultate_cop2idInd" indexName="idInd" indexType="" isUnique="false"><IndexAttributes><IAttribute>id</IAttribute></IndexAttributes></IndexFile></IndexFiles></Table></Tables>
+            <Table fileName="" rowLength="" tableName="par2">
+                <Structure>
+                    <Attribute attributeName="id" isnull="false" length="0" type="Integer"/>
+                    <Attribute attributeName="nume" isnull="false" length="255" type="String"/>
+                    <Attribute attributeName="prenume" isnull="false" length="255" type="String"/>
+                </Structure>
+                <primaryKey>
+                    <pkAttribute>id</pkAttribute>
+                </primaryKey>
+                <uniqueKeys>
+                    <UniqueAttribute>id</UniqueAttribute>
+                </uniqueKeys>
+                <IndexFiles/>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_facultate_par2idInd" indexName="idInd" indexType="" isUnique="true">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_facultate_par2idInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_facultate_par2idInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_facultate_par2idInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+            </Table>
+            <Table fileName="" rowLength="" tableName="cop2">
+                <Structure>
+                    <Attribute attributeName="id" isnull="false" length="0" type="Integer"/>
+                    <Attribute attributeName="email" isnull="false" length="255" type="String"/>
+                    <Attribute attributeName="fkP" isnull="false" length="0" type="Integer"/>
+                </Structure>
+                <primaryKey>
+                    <pkAttribute>id</pkAttribute>
+                </primaryKey>
+                <uniqueKeys>
+                    <UniqueAttribute>id</UniqueAttribute>
+                    <UniqueAttribute>email</UniqueAttribute>
+                </uniqueKeys>
+                <foreignKeys>
+                    <foreignKey>
+                        <fkAttribute>fkP</fkAttribute>
+                        <references>
+                            <refTable>par2</refTable>
+                            <refAttribute>id</refAttribute>
+                        </references>
+                    </foreignKey>
+                </foreignKeys>
+                <IndexFiles/>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_facultate_cop2idInd" indexName="idInd" indexType="" isUnique="true">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_facultate_cop2idInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="email_facultate_cop2emailInd" indexName="emailInd" indexType="" isUnique="true">
+                        <IndexAttributes>
+                            <IAttribute>email</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_facultate_cop2idInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="fkP_facultate_cop2fkPInd" indexName="fkPInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>fkP</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_facultate_cop2idInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+            </Table>
+        </Tables>
     </DataBase>
+
+    <DataBase name="oras">
+        <Tables>
+            <Table fileName="" rowLength="" tableName="cartier">
+                <Structure>
+                    <Attribute attributeName="id" isnull="false" length="0" type="Integer"/>
+                    <Attribute attributeName="nume" isnull="false" length="255" type="String"/>
+                    <Attribute attributeName="suprafata" isnull="false" length="0" type="Integer"/>
+                </Structure>
+                <primaryKey>
+                    <pkAttribute>id</pkAttribute>
+                </primaryKey>
+                <uniqueKeys>
+                    <UniqueAttribute>id</UniqueAttribute>
+                    <UniqueAttribute>nume</UniqueAttribute>
+                </uniqueKeys>
+                <IndexFiles/>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_oras_cartieridInd" indexName="idInd" indexType="" isUnique="true">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_oras_cartieridInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="nume_oras_cartiernumeInd" indexName="numeInd" indexType="" isUnique="true">
+                        <IndexAttributes>
+                            <IAttribute>nume</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_oras_cartieridInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_oras_cartieridInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="nume_oras_cartieraass" indexName="aass" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>nume</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="suprafata_oras_cartierasww" indexName="asww" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>suprafata</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="suprafata_oras_cartierassas" indexName="assas" indexType="" isUnique="true">
+                        <IndexAttributes>
+                            <IAttribute>suprafata</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+            </Table>
+            <Table fileName="" rowLength="" tableName="persoane">
+                <Structure>
+                    <Attribute attributeName="id" isnull="false" length="0" type="Integer"/>
+                    <Attribute attributeName="nume" isnull="false" length="0" type="String"/>
+                    <Attribute attributeName="email" isnull="false" length="255" type="String"/>
+                    <Attribute attributeName="FKcartier" isnull="false" length="0" type="Integer"/>
+                </Structure>
+                <primaryKey>
+                    <pkAttribute>id</pkAttribute>
+                </primaryKey>
+                <uniqueKeys>
+                    <UniqueAttribute>id</UniqueAttribute>
+                    <UniqueAttribute>email</UniqueAttribute>
+                </uniqueKeys>
+                <foreignKeys>
+                    <foreignKey>
+                        <fkAttribute>FKcartier</fkAttribute>
+                        <references>
+                            <refTable>cartier</refTable>
+                            <refAttribute>id</refAttribute>
+                        </references>
+                    </foreignKey>
+                </foreignKeys>
+                <IndexFiles/>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_oras_persoaneidInd" indexName="idInd" indexType="" isUnique="true">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_oras_persoaneidInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_oras_persoaneidInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="email_oras_persoaneemailInd" indexName="emailInd" indexType="" isUnique="true">
+                        <IndexAttributes>
+                            <IAttribute>email</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_oras_persoaneidInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="FKcartier_oras_persoaneFKcartierInd" indexName="FKcartierInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>FKcartier</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_oras_persoaneidInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+            </Table>
+            <Table fileName="" rowLength="" tableName="test">
+                <Structure>
+                    <Attribute attributeName="id" isnull="false" length="0" type="Integer"/>
+                    <Attribute attributeName="nume" isnull="false" length="255" type="String"/>
+                    <Attribute attributeName="prenume" isnull="false" length="0" type="String"/>
+                </Structure>
+                <primaryKey>
+                    <pkAttribute>id</pkAttribute>
+                </primaryKey>
+                <uniqueKeys>
+                    <UniqueAttribute>id</UniqueAttribute>
+                    <UniqueAttribute>nume</UniqueAttribute>
+                </uniqueKeys>
+                <IndexFiles/>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_oras_testidInd" indexName="idInd" indexType="" isUnique="true">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_oras_testidInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="nume_oras_testnumeInd" indexName="numeInd" indexType="" isUnique="true">
+                        <IndexAttributes>
+                            <IAttribute>nume</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_oras_testidInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="id_oras_testidInd" indexName="idInd" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>id</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+                <IndexFiles>
+                    <IndexFile indexFileName="prenume_oras_testindexPren" indexName="indexPren" indexType="" isUnique="false">
+                        <IndexAttributes>
+                            <IAttribute>prenume</IAttribute>
+                        </IndexAttributes>
+                    </IndexFile>
+                </IndexFiles>
+            </Table>
+        </Tables>
+    </DataBase>
+
+
+    
 </DataBases>

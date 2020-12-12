@@ -52,6 +52,7 @@ public class RecordServiceImpl implements RecordService {
             if(cols.get(i).getIsUniqueKey() == true){
                 String uniqueKeyIndexFile = dbName+"_"+tableName + "_" + attributeName + "Ind";
                 Map<String, String> allRecordsFromUKIndex = recordRepository.findAllRecords(uniqueKeyIndexFile);
+                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "+uniqueKeyIndexFile);
                 if(allRecordsFromUKIndex.keySet().stream().anyMatch(unique->unique.equals(valueForAttribute))){
                     throw new ServiceException("must be unique", ExceptionType.ERROR, HttpStatus.BAD_REQUEST);
                 }

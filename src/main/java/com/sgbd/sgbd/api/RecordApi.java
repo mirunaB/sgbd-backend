@@ -114,6 +114,7 @@ public class RecordApi {
                             Map<String,String> records=recordService.findAllRecords(dbName+"_"+table+"_"+cols.get(i).getAttributeName()+"Ind");
                             System.out.println(records.size()+" !!!");
                             System.out.println(dbName+"_"+table+cols.get(i).getAttributeName()+"Ind"+" ****");
+                            System.out.println("++++ "+recordToBeDeleted.getRow().keySet().toArray()[0].toString());
                             if (records.containsKey(recordToBeDeleted.getRow().keySet().toArray()[0].toString())){
                                 return false;
                             }
@@ -161,6 +162,18 @@ public class RecordApi {
 
         logger.info("LOG FINISH - find all");
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping(value = "/findRec/{dbName}/{idRec}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity findRecById(@PathVariable String dbName,@PathVariable String idRec){
+
+        logger.info("LOG START - find record by id");
+
+        String result = recordService.findRecordById(idRec,dbName);
+
+        logger.info("LOG FINISH - find record by id");
+        return new ResponseEntity(result, HttpStatus.OK);
     }
 
     @CrossOrigin(origins = "http://localhost:3000")

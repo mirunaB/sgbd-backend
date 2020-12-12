@@ -1,6 +1,7 @@
 package com.sgbd.sgbd.service;
 
 import com.sgbd.sgbd.model.Column;
+import com.sgbd.sgbd.model.Index;
 import com.sgbd.sgbd.model.Record;
 
 import java.util.List;
@@ -19,4 +20,5 @@ public interface RecordService {
     void deleteAllRecordsForTable(String dbName,String tableName);
 
     List<String> select(String dbName, String tableName, String condition, String columns) throws Exception;
+
 }

@@ -100,6 +100,7 @@ public class CatalogApi {
 
         logger.info("LOG START - add Index");
 
+        index.setName(index.getName()+"Ind");
         catalogService.addIndex(dbName, tableName,index);
 
         logger.info("LOG FINISH - Add index");
