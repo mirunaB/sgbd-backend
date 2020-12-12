@@ -1,5 +1,6 @@
 package com.sgbd.sgbd.repo.impl;
 
+import com.sgbd.sgbd.model.Index;
 import com.sgbd.sgbd.model.Record;
 import com.sgbd.sgbd.repo.RecordRepository;
 import org.springframework.data.redis.core.HashOperations;
@@ -8,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Repository
 public class RecordRepositoryImpl implements RecordRepository {
@@ -105,11 +105,22 @@ public class RecordRepositoryImpl implements RecordRepository {
     }
 
     @Override
-    public List<String> select(String dbName, String tableName, List<String> condition, List<Integer> columns) {
+    public List<String> select(String dbName, String tableName, List<String> condition, List<Integer> columns, List<String> columnsToLookForIndex) {
 
-        Map<String, String> allRecords = this.findAllRecords(dbName + DATABASE_TABLE_SEPARATOR + tableName);
+        Map<String,String> records = null;
+        for (String condWithName: columnsToLookForIndex) {
+            records = this.findAllRecords(dbName+"_"+tableName+"_"+ condWithName +"Ind");
 
-        List<Map.Entry<String, String>> collect = allRecords.entrySet().stream()
+            if(records != null && records.size()>0) { // index found
+                break;
+            }
+        }
+
+        if(records == null || records.size() == 0) { // in case we have no index retrieve all records
+            records = this.findAllRecords(dbName + DATABASE_TABLE_SEPARATOR + tableName);
+        }
+
+        List<Map.Entry<String, String>> collect = records.entrySet().stream()
                 .filter(entry -> checkCondition(entry, condition))
                 .collect(Collectors.toList());
 

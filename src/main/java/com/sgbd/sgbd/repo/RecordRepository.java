@@ -19,5 +19,5 @@ public interface RecordRepository {
     void delete(String dbName, String tableName, Record record);
     void deleteRec(String dbTableName,Record record);
 
-    List select(String dbName, String tableName, List<String> condition, List<Integer> columns);
+    List select(String dbName, String tableName, List<String> condition, List<Integer> columns, List<String> cs);
 }
