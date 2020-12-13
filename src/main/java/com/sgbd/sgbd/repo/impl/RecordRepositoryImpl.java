@@ -114,20 +114,9 @@ public class RecordRepositoryImpl implements RecordRepository {
             Map<String,String> result = new HashMap<>();
             String res = "";
             for (Map.Entry<String, String> rec:records.entrySet()) { // iterate over all records we just retrieved
-                Set<String> id = new HashSet<>();
-                id.add(rec.getValue());
-                Record value = this.findById(dbName, tableName, id);
-                // TODO: findById above doesnt work.
-                for (Map.Entry<String, String> valOfRec: value.getRow().entrySet()) { // for a particular record let's translate data into values as a#b#c
-                    if(rec.equals("")){
-                        res = valOfRec.getValue();
-                    }
-                    else{
-                        res = res + "#" + valOfRec.getValue();
-                    }
-                }
 
-                result.put(rec.getValue(), res);
+                String val = this.findRecordById(rec.getKey(), dbName + DATABASE_TABLE_SEPARATOR + tableName);
+                result.put(rec.getKey(), val);
 
             }
 
