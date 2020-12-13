@@ -32,60 +32,57 @@ public class RecordServiceImpl implements RecordService {
     @Override
     public void saveRecord(String dbName, String tableName, Record record, List<Column> cols) {
 
-        String key= (String) record.getRow().keySet().toArray()[0];
-        String value=record.getRow().get(key);
-        int nrKeys=key.split("#").length;
+        String key = (String) record.getRow().keySet().toArray()[0];
+        String value = record.getRow().get(key);
+        int nrKeys = key.split("#").length;
         String attributes = "";
-        for (int i=0;i<nrKeys;i++){
-            attributes +=cols.get(i).getAttributeName();
+        for (int i = 0; i < nrKeys; i++) {
+            attributes += cols.get(i).getAttributeName();
         }
 
-        String file = dbName +"_"+tableName+ "_" + attributes + "Ind";
-        String fileRec = dbName +"_"+tableName;
+        String file = dbName + "_" + tableName + "_" + attributes + "Ind";
+        String fileRec = dbName + "_" + tableName;
 
         List<Pair> uniqueKeys = new ArrayList<>();
         List<Pair> foreignKeys = new ArrayList<>();
 
-        for(int i = nrKeys; i < cols.size(); i++){
+        for (int i = nrKeys; i < cols.size(); i++) {
             String attributeName = cols.get(i).getAttributeName();
-            String valueForAttribute = value.split("#")[i-nrKeys];
-            if(cols.get(i).getIsUniqueKey() == true){
-                String uniqueKeyIndexFile = dbName+"_"+tableName + "_" + attributeName + "Ind";
+            String valueForAttribute = value.split("#")[i - nrKeys];
+            if (cols.get(i).getIsUniqueKey() == true) {
+                String uniqueKeyIndexFile = dbName + "_" + tableName + "_" + attributeName + "Ind";
                 Map<String, String> allRecordsFromUKIndex = recordRepository.findAllRecords(uniqueKeyIndexFile);
-                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! "+uniqueKeyIndexFile);
-                if(allRecordsFromUKIndex.keySet().stream().anyMatch(unique->unique.equals(valueForAttribute))){
+                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + uniqueKeyIndexFile);
+                if (allRecordsFromUKIndex.keySet().stream().anyMatch(unique -> unique.equals(valueForAttribute))) {
                     throw new ServiceException("must be unique", ExceptionType.ERROR, HttpStatus.BAD_REQUEST);
-                }
-                else{
-                    Map<String,String> map=new HashMap<>();
+                } else {
+                    Map<String, String> map = new HashMap<>();
                     map.put(valueForAttribute, key);
                     uniqueKeys.add(new Pair(attributeName, new Record(map)));
                 }
             }
-            if (cols.get(i).getFKeys() != null){
+            if (cols.get(i).getFKeys() != null) {
 //                String keys=cols.get(i).getFKeys().keySet().toString();
-                String cheie=cols.get(i).getFKeys().keySet().toArray()[0].toString();
-                String valuesKeyFk=cols.get(i).getFKeys().get(cheie).split(",")[1];
-                String cheieKeyFk=cols.get(i).getFKeys().get(cheie).split(",")[0];
+                String cheie = cols.get(i).getFKeys().keySet().toArray()[0].toString();
+                String valuesKeyFk = cols.get(i).getFKeys().get(cheie).split(",")[1];
+                String cheieKeyFk = cols.get(i).getFKeys().get(cheie).split(",")[0];
                 //aici e cu , si arunca exceptii cum trimit ele fk
                 String parentPKIndexFile = dbName + "_" + cheieKeyFk + "_" + valuesKeyFk + "Ind";
                 Map<String, String> allRecordsFromParentTablePKIndex = recordRepository.findAllRecords(parentPKIndexFile);
                 boolean existsValueInParentTable = allRecordsFromParentTablePKIndex.containsKey(valueForAttribute);
-                if(!existsValueInParentTable){
+                if (!existsValueInParentTable) {
                     throw new ServiceException("There is Fk Constraint", ExceptionType.ERROR, HttpStatus.BAD_REQUEST);
-                }
-                else{
-                    String FKIndexFile = dbName+"_"+tableName + "_" + attributeName + "Ind";
+                } else {
+                    String FKIndexFile = dbName + "_" + tableName + "_" + attributeName + "Ind";
                     Map<String, String> allRecordsFromFKIndex = recordRepository.findAllRecords(FKIndexFile);
                     String valueForCurrentFK = allRecordsFromFKIndex.get(valueForAttribute);
-                    if(valueForCurrentFK == null){
-                        Map<String, String> newMap=new HashMap<>();
-                        newMap.put(valueForAttribute,key);
+                    if (valueForCurrentFK == null) {
+                        Map<String, String> newMap = new HashMap<>();
+                        newMap.put(valueForAttribute, key);
                         foreignKeys.add(new Pair(attributeName, new Record(newMap)));
-                    }
-                    else{
-                        Map<String, String> newMap=new HashMap<>();
-                        newMap.put(valueForAttribute,valueForCurrentFK + ";" + key);
+                    } else {
+                        Map<String, String> newMap = new HashMap<>();
+                        newMap.put(valueForAttribute, valueForCurrentFK + ";" + key);
                         foreignKeys.add(new Pair(attributeName, new Record(newMap)));
                     }
                 }
@@ -93,18 +90,18 @@ public class RecordServiceImpl implements RecordService {
         }
 
 
-        Map<String,String> recordMap=new HashMap();
-        recordMap.put(key,value);
+        Map<String, String> recordMap = new HashMap();
+        recordMap.put(key, value);
 
         recordRepository.saveRecord(new Record(recordMap), file);
-        recordRepository.saveRecord(record,fileRec);
+        recordRepository.saveRecord(record, fileRec);
         uniqueKeys.forEach(pair -> {
-            String uniqueKeyIndexFile = dbName+"_"+tableName + "_" + pair.getKey() + "Ind";
-            recordRepository.saveRecord((Record)pair.getValue(), uniqueKeyIndexFile);
+            String uniqueKeyIndexFile = dbName + "_" + tableName + "_" + pair.getKey() + "Ind";
+            recordRepository.saveRecord((Record) pair.getValue(), uniqueKeyIndexFile);
         });
         foreignKeys.forEach(pair -> {
-            String FKIndexFile = dbName+"_"+tableName + "_" + pair.getKey() + "Ind";
-            recordRepository.saveRecord((Record)pair.getValue(), FKIndexFile);
+            String FKIndexFile = dbName + "_" + tableName + "_" + pair.getKey() + "Ind";
+            recordRepository.saveRecord((Record) pair.getValue(), FKIndexFile);
         });
 //        recordRepository.save(dbName, tableName, record);
     }
@@ -122,7 +119,7 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public Map<String,String> findAll(String dbName, String tableName) {
+    public Map<String, String> findAll(String dbName, String tableName) {
 
         return recordRepository.findAll(dbName, tableName);
     }
@@ -134,28 +131,28 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public String findRecordById(String id, String databaseTableNames) {
-       return recordRepository.findRecordById(id,databaseTableNames);
+        return recordRepository.findRecordById(id, databaseTableNames);
     }
 
     @Override
     public void deleteAllRecordsForTable(String dbName, String tableName) {
-        Map<String,String> mymap=new HashMap();
-        mymap=findAll(dbName,tableName);
-        mymap.forEach((k,v)->{
-            Record r=new Record();
-            Map<String,String> row=new HashMap<>();
-            row.put(k,v);
+        Map<String, String> mymap = new HashMap();
+        mymap = findAll(dbName, tableName);
+        mymap.forEach((k, v) -> {
+            Record r = new Record();
+            Map<String, String> row = new HashMap<>();
+            row.put(k, v);
             r.setRow(row);
-            deleteRecord(dbName,tableName,r);
+            deleteRecord(dbName, tableName, r);
         });
     }
 
-    private int findColumnIndexInTable(String searchedColumn, String dbName, String tableName, boolean skipAsterisk){
+    private int findColumnIndexInTable(String searchedColumn, String dbName, String tableName, boolean skipAsterisk) {
 
-        List<Column> cols = catalogService.getAllColumnForTable(dbName,tableName);
+        List<Column> cols = catalogService.getAllColumnForTable(dbName, tableName);
 
-        for(int j=0; j<cols.size(); j++){
-            if(skipAsterisk || searchedColumn.equals(cols.get(j).getAttributeName())){
+        for (int j = 0; j < cols.size(); j++) {
+            if (skipAsterisk || searchedColumn.equals(cols.get(j).getAttributeName())) {
                 return j;
             }
         }
@@ -169,42 +166,52 @@ public class RecordServiceImpl implements RecordService {
         // let's translate $columns into indexes using $cols; in repo we store them as col1#col2#col3... so if we send an array of numbers
         // we can split by # and select desired columns
         List<Integer> colsIndex = new ArrayList<>();
-        String[] columnsTokens = columns.split(",");
+        String[] columnsTokens = new String[10000];
+        String[] aux = columns.split(",");
 
-        int size = columnsTokens.length;
-        if(columns.equals("*")){
-            size = catalogService.getAllColumnForTable(dbName,tableName).size();
-            columnsTokens = new String[size];
+        int auxSelect = 0;
+        for (String caux :aux) {
+            columnsTokens[auxSelect] = caux;
+            auxSelect++;
         }
-        for (int i=0; i<size; i++){
+        List<String> conditionWithName = new ArrayList<>();
 
-            int index = -1;
 
-            if(!columns.equals("*")) {
-                index = findColumnIndexInTable(columnsTokens[i], dbName, tableName, columns.equals("*"));
+        if (columns.equals("*")) {
+            List<Column> colList = catalogService.getAllColumnForTable(dbName, tableName);
+
+            for (int i = 0; i < colList.size(); i++) {
+                columnsTokens[i] = String.valueOf(colList.get(i).getAttributeName());
+                conditionWithName.add(columnsTokens[i]);
+                colsIndex.add(i);
             }
-            else{
-                index = i;
-            }
-            if(index != -1){
-                colsIndex.add(index);
-            }
-            else{
-                throw new Exception("invalid column");
+        } else {
+            int size = columnsTokens.length;
+            for (int i = 0; i < size; i++) {
+                int index = -1;
+                if (!columns.equals("*")) {
+                    index = findColumnIndexInTable(columnsTokens[i], dbName, tableName, columns.equals("*"));
+                    conditionWithName.add(columnsTokens[i]);
+                } else {
+                    index = i;
+                }
+                if (index != -1) {
+                    colsIndex.add(index);
+                } else {
+                    throw new Exception("invalid column");
+                }
             }
         }
 
         // let's do same thing for condition
         List<String> conditions = new ArrayList<>();
-        List<String> conditionWithName = new ArrayList<>();
         String[] tokens = condition.split("AND");
-        if(!condition.equals("") && !condition.equals("undefined")) {
+        if (!condition.equals("") && !condition.equals("undefined")) {
             for (String cond : tokens) {
                 // i assume this cond looks like colName=value
                 String[] condTokens = cond.split("=");
                 String colummName = condTokens[0];
                 String value = condTokens[1];
-                conditionWithName.add(colummName);
                 int columnIndex = findColumnIndexInTable(colummName, dbName, tableName, columns.equals("*"));
                 conditions.add(columnIndex + "#" + value);
             }

@@ -317,7 +317,7 @@
                     </IndexFile>
                 </IndexFiles>
             </Table>
-        </Tables>
+        <Table fileName="" rowLength="" tableName="testradu"><Structure><Attribute attributeName="id" isnull="false" length="100" type="String"/><Attribute attributeName="number" isnull="false" length="100" type="String"/></Structure><primaryKey><pkAttribute>id</pkAttribute></primaryKey><uniqueKeys><UniqueAttribute>id</UniqueAttribute></uniqueKeys><IndexFiles><IndexFile indexFileName="facultate_testradu_idInd" indexName="idInd" indexType="" isUnique="false"><IndexAttributes><IAttribute>id</IAttribute></IndexAttributes></IndexFile><IndexFile indexFileName="facultate_testradu_idInd" indexName="idInd" indexType="" isUnique="false"><IndexAttributes><IAttribute>id</IAttribute></IndexAttributes></IndexFile></IndexFiles></Table></Tables>
     </DataBase>
 
     <DataBase name="oras">
