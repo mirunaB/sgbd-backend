@@ -212,7 +212,7 @@ public class RecordServiceImpl implements RecordService {
                 String[] condTokens = cond.split("=");
                 String colummName = condTokens[0];
                 String value = condTokens[1];
-                int columnIndex = findColumnIndexInTable(colummName, dbName, tableName, columns.equals("*"));
+                int columnIndex = findColumnIndexInTable(colummName, dbName, tableName, false);
                 conditions.add(columnIndex + "#" + value);
             }
         }

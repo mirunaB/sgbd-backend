@@ -81,7 +81,6 @@ public class RecordRepositoryImpl implements RecordRepository {
             return true;
         }
         String[] tokens = entry.getValue().split("#");
-        int colIndex = Integer.valueOf(tokens[0]);
 
         for (String condition: condArr) {
             String[] condTokens = condition.split("#");
@@ -148,7 +147,7 @@ public class RecordRepositoryImpl implements RecordRepository {
                     record+= key + "#";
                 }
                 else{
-                    record+=tokens[col-1];
+                    record+=tokens[col-1] + "#";
                 }
             }
 
