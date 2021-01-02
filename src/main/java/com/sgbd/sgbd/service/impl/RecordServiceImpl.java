@@ -187,7 +187,7 @@ public class RecordServiceImpl implements RecordService {
             }
         } else {
             int size = columnsTokens.length;
-            for (int i = 0; i < size; i++) {
+            for (int i = 0; i < auxSelect; i++) {
                 int index = -1;
                 if (!columns.equals("*")) {
                     index = findColumnIndexInTable(columnsTokens[i], dbName, tableName, columns.equals("*"));

@@ -107,9 +107,13 @@ public class RecordRepositoryImpl implements RecordRepository {
     public List<String> select(String dbName, String tableName, List<String> condition, List<Integer> columns, List<String> columnsToLookForIndex) {
 
         Map<String,String> records = null;
-        for (String condWithName: columnsToLookForIndex) {
-            records = this.findAllRecords(dbName+"_"+tableName+"_"+ condWithName +"Ind");
-
+        for (String condWithName: condition) {
+            try {
+                records = this.findAllRecords(dbName + "_" + tableName + "_" + condWithName + "Ind");
+            }catch (Exception e){
+                records = findAll(dbName, tableName);
+                e.printStackTrace();
+            }
             Map<String,String> result = new HashMap<>();
             String res = "";
             for (Map.Entry<String, String> rec:records.entrySet()) { // iterate over all records we just retrieved
