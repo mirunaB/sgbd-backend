@@ -1,6 +1,7 @@
 package com.sgbd.sgbd.api;
 
 import com.sgbd.sgbd.model.Column;
+import com.sgbd.sgbd.model.JoinReq;
 import com.sgbd.sgbd.model.Record;
 import com.sgbd.sgbd.service.CatalogService;
 import com.sgbd.sgbd.service.RecordService;
@@ -189,11 +190,25 @@ public class RecordApi {
         logger.info("LOG START - select");
 
         List<String> result = recordService.select(dbName, tableName, condition, columns);
+        for (int i=0;i<result.size();i++){
+            System.out.println(result.get(i));
+        }
 
         logger.info("LOG FINISH - select");
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping(value = "/innerJoin/{dbName}", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity nestedJoin(@PathVariable String dbName, @RequestBody JoinReq joinReq) {
+
+        logger.info("LOG START - join");
+
+        List<String> result=recordService.nestedJoinServ(dbName,joinReq);
+        logger.info("LOG FINISH - join");
+        return new ResponseEntity(result,HttpStatus.OK);
+    }
 
 
     @ExceptionHandler({ServiceException.class})

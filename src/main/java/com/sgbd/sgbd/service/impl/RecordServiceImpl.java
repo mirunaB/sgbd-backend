@@ -1,6 +1,7 @@
 package com.sgbd.sgbd.service.impl;
 
 import com.sgbd.sgbd.model.Column;
+import com.sgbd.sgbd.model.JoinReq;
 import com.sgbd.sgbd.model.Pair;
 import com.sgbd.sgbd.model.Record;
 import com.sgbd.sgbd.repo.RecordRepository;
@@ -52,7 +53,6 @@ public class RecordServiceImpl implements RecordService {
             if (cols.get(i).getIsUniqueKey() == true) {
                 String uniqueKeyIndexFile = dbName + "_" + tableName + "_" + attributeName + "Ind";
                 Map<String, String> allRecordsFromUKIndex = recordRepository.findAllRecords(uniqueKeyIndexFile);
-                System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!! " + uniqueKeyIndexFile);
                 if (allRecordsFromUKIndex.keySet().stream().anyMatch(unique -> unique.equals(valueForAttribute))) {
                     throw new ServiceException("must be unique", ExceptionType.ERROR, HttpStatus.BAD_REQUEST);
                 } else {
@@ -170,7 +170,7 @@ public class RecordServiceImpl implements RecordService {
         String[] aux = columns.split(",");
 
         int auxSelect = 0;
-        for (String caux :aux) {
+        for (String caux : aux) {
             columnsTokens[auxSelect] = caux;
             auxSelect++;
         }
@@ -218,5 +218,130 @@ public class RecordServiceImpl implements RecordService {
         }
 
         return recordRepository.select(dbName, tableName, conditions, colsIndex, conditionWithName);
+    }
+
+    private int findColumnInd(String searchedColumn, String dbName, String tableName) {
+
+        List<Column> cols = catalogService.getAllColumnForTable(dbName, tableName);
+
+        for (int j = 0; j < cols.size(); j++) {
+            if (searchedColumn.equals(cols.get(j).getAttributeName())) {
+                return j;
+            }
+        }
+
+        return -1;
+    }
+
+    private String findValueForColumn(Map.Entry<String, String> entry1, String colName, String dbName, String table1) {
+
+        /*find value for a column from it's value map(id:col1#col2)*/
+
+        String[] values = entry1.getValue().split("#");
+        int ind = findColumnInd(colName, dbName, table1);
+        String val;
+        if (ind == 0) {
+            val = entry1.getKey();
+        } else {
+            val = values[ind - 1];
+        }
+        return val;
+
+
+    }
+
+    private String formatValue(String value){
+        String result="";
+        String[] values = value.split("#");
+        for (int i=0;i<values.length-1;i++){
+            result=result+values[i]+";";
+        }
+        result+=values[values.length-1];
+        return result;
+
+    }
+
+    @Override
+    public List<String> nestedJoinServ(String dbName, JoinReq joinReq) {
+
+
+        List<String> resultList=new ArrayList<>();
+        String table1 = joinReq.getTable1();
+        String table2 = joinReq.getTable2();
+        String col1 = joinReq.getCol1();
+        String col2 = joinReq.getCol2();
+        Map<String, String> table1Rec = findAllRecords(dbName + "_" + table1);
+        Map<String, String> table2Rec = findAllRecords(dbName + "_" + table2);
+        for (Map.Entry<String, String> entry1 : table1Rec.entrySet()) {
+            String val1=findValueForColumn(entry1,col1, dbName,table1);
+            for (Map.Entry<String, String> entry2 : table2Rec.entrySet()) {
+                String val2= findValueForColumn(entry2,col2, dbName,table2);
+                if (val1.equals(val2)){
+                    String s=entry1.getKey()+";"+formatValue(entry1.getValue())+";"+entry2.getKey()+";"+formatValue(entry2.getValue());
+                    resultList.add(s);
+                }
+            }
+
+        }
+
+       return resultList;
+
+    }
+
+    @Override
+    public List<String> leftNestedJoinServ(String dbName, JoinReq joinReq) {
+        List<String> resultList=new ArrayList<>();
+        String table1 = joinReq.getTable1();
+        String table2 = joinReq.getTable2();
+        String col1 = joinReq.getCol1();
+        String col2 = joinReq.getCol2();
+        Map<String, String> table1Rec = findAllRecords(dbName + "_" + table1);
+        Map<String, String> table2Rec = findAllRecords(dbName + "_" + table2);
+        for (Map.Entry<String, String> entry1 : table1Rec.entrySet()) {
+            String val1=findValueForColumn(entry1,col1, dbName,table1);
+            for (Map.Entry<String, String> entry2 : table2Rec.entrySet()) {
+                String val2= findValueForColumn(entry2,col2, dbName,table2);
+                if (val1.equals(val2)){
+                    String s=entry1.getKey()+";"+entry1.getValue()+";"+entry2.getKey()+";"+entry2.getValue();
+                    resultList.add(s);
+                }
+                else{
+                    String s=entry1.getKey()+";"+entry1.getValue()+";"+"null"+";"+"null";
+                    resultList.add(s);
+                }
+            }
+
+        }
+
+        return resultList;
+
+    }
+
+    @Override
+    public List<String> rightNestedJoinServ(String dbName, JoinReq joinReq) {
+        List<String> resultList=new ArrayList<>();
+        String table1 = joinReq.getTable1();
+        String table2 = joinReq.getTable2();
+        String col1 = joinReq.getCol1();
+        String col2 = joinReq.getCol2();
+        Map<String, String> table1Rec = findAllRecords(dbName + "_" + table1);
+        Map<String, String> table2Rec = findAllRecords(dbName + "_" + table2);
+        for (Map.Entry<String, String> entry1 : table1Rec.entrySet()) {
+            String val1=findValueForColumn(entry1,col1, dbName,table1);
+            for (Map.Entry<String, String> entry2 : table2Rec.entrySet()) {
+                String val2= findValueForColumn(entry2,col2, dbName,table2);
+                if (val1.equals(val2)){
+                    String s=entry1.getKey()+";"+entry1.getValue()+";"+entry2.getKey()+";"+entry2.getValue();
+                    resultList.add(s);
+                }
+                else{
+                    String s=null+";"+null+";"+entry2.getKey()+";"+entry2.getValue();
+                    resultList.add(s);
+                }
+            }
+
+        }
+
+        return resultList;
     }
 }
