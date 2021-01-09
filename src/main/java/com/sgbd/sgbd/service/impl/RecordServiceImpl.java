@@ -13,10 +13,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @org.springframework.stereotype.Service
 @Primary
@@ -343,5 +340,47 @@ public class RecordServiceImpl implements RecordService {
         }
 
         return resultList;
+    }
+
+    /*
+    expected:
+    colsHeader = email;nume;phone
+    records[i] = 1;2;3
+    selectedHeaders = email;phone
+
+    returned:
+    list[i] =  1;3
+     */
+    private List<String> selectJoin(String colsHeader, List<String> records, String selectedHeaders){
+
+        List<String> result = new ArrayList<>();
+        String[] allHeaders = colsHeader.split(";");
+        String[] selHeaders = selectedHeaders.split(";");
+
+        for (String rec: records) {
+            String selectedRec = "";
+            String[] recTokens = rec.split(";");
+
+            for (int i=0; i<selHeaders.length; i++) { // loop through all columns
+                String selectedCol= selHeaders[i];
+                if(Arrays.asList(allHeaders).contains(selectedCol)) { // this is a selected header so i extract the values
+                    selectedRec = selectedRec + recTokens[i] + ";";    // append value for selected header
+                }
+            }
+            if(!selectedRec.equals("")) { // remove last ";" so it's "1;3" and not "1;3;"
+                RecordServiceImpl.removeLastChar(selectedRec);
+            }
+            result.add(selectedRec);
+        }
+
+        return result;
+    }
+
+    private static String removeLastChar(String str) {
+        return removeLastChars(str, 1);
+    }
+
+    private static String removeLastChars(String str, int chars) {
+        return str.substring(0, str.length() - chars);
     }
 }
