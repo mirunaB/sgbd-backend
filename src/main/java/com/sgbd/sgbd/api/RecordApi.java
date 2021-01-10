@@ -205,8 +205,30 @@ public class RecordApi {
 
         logger.info("LOG START - join");
 
-        List<String> result=recordService.nestedJoinServ(dbName,joinReq,joinReq.getCondition());
+        List<String> result=recordService.innerJoinServ(dbName,joinReq,joinReq.getCondition(),"inner");
         logger.info("LOG FINISH - join");
+        return new ResponseEntity(result,HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping(value = "/leftInnerJoin/{dbName}", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity leftnestedJoin(@PathVariable String dbName, @RequestBody JoinReq joinReq) {
+
+        logger.info("LOG START - left join");
+
+        List<String> result=recordService.innerJoinServ(dbName,joinReq,joinReq.getCondition(),"left");
+        logger.info("LOG FINISH - left join");
+        return new ResponseEntity(result,HttpStatus.OK);
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping(value = "/rightInnerJoin/{dbName}", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity rightnestedJoin(@PathVariable String dbName, @RequestBody JoinReq joinReq) {
+
+        logger.info("LOG START - left join");
+
+        List<String> result=recordService.innerJoinServ(dbName,joinReq,joinReq.getCondition(),"right");
+        logger.info("LOG FINISH - left join");
         return new ResponseEntity(result,HttpStatus.OK);
     }
 

@@ -21,9 +21,8 @@ public interface RecordService {
     void deleteAllRecordsForTable(String dbName,String tableName);
 
     List<String> select(String dbName, String tableName, String condition, String columns) throws Exception;
-    List<String> nestedJoinServ(String dbName, JoinReq joinReq,String condition);
-    List<String> leftNestedJoinServ(String dbName, JoinReq joinReq);
-    List<String> rightNestedJoinServ(String dbName, JoinReq joinReq);
+    List<Map<String,String>> prepareJoinServ(String dbName, JoinReq joinReq,String condition);
+    List<String> innerJoinServ(String dbName, JoinReq joinReq, String condition,String typeJoin);
 
 
     List<String> hashJoin(String dbName, JoinReq joinReq, String a);

@@ -280,7 +280,7 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public List<String> nestedJoinServ(String dbName, JoinReq joinReq, String condition) {
+    public List<Map<String, String>> prepareJoinServ(String dbName, JoinReq joinReq, String condition) {
 
         /*  condition:tabela.numeCol=valANDtabela2.numec2=val2*/
 
@@ -318,7 +318,7 @@ public class RecordServiceImpl implements RecordService {
                     if (finalRes.size() == 0) {
                         // there is no cond with index yet
                         System.out.println("first index from condition");
-                        Map<String,String> a= getAllRecordsForValue(dbName + "_" + tableName + "_" + colName + "Ind", val, dbName + "_" + tableName);
+                        Map<String, String> a = getAllRecordsForValue(dbName + "_" + tableName + "_" + colName + "Ind", val, dbName + "_" + tableName);
 //                        finalRes.put(a.keySet())
                         System.out.println("final rez");
                         System.out.println(finalRes);
@@ -326,7 +326,7 @@ public class RecordServiceImpl implements RecordService {
 
                         //intersectie
                         System.out.println("another index file");
-                        Map<String,String> anotherIndexRez=getAllRecordsForValue(dbName + "_" + tableName + "_" + colName + "Ind", val, dbName + "_" + tableName);
+                        Map<String, String> anotherIndexRez = getAllRecordsForValue(dbName + "_" + tableName + "_" + colName + "Ind", val, dbName + "_" + tableName);
                         System.out.println(anotherIndexRez);
                         System.out.println("aici");
 //                        for (Map.Entry<String,String>entry:anotherIndexRez.entrySet()){
@@ -355,6 +355,7 @@ public class RecordServiceImpl implements RecordService {
                 table2Rec = finalRes;
 
             }
+            //kjdkd
 
             if (finalRes.size() == 0) {
                 //no index
@@ -378,34 +379,77 @@ public class RecordServiceImpl implements RecordService {
             table1Rec = findAllRecords(dbName + "_" + table1);
             table2Rec = findAllRecords(dbName + "_" + table2);
         }
-        for (Map.Entry<String, String> entry1 : table1Rec.entrySet()) {
-            String val1 = findValueForColumn(entry1, col1, dbName, table1);
-            for (Map.Entry<String, String> entry2 : table2Rec.entrySet()) {
-                String val2 = findValueForColumn(entry2, col2, dbName, table2);
-                if (val1.equals(val2)) {
-                    String s = entry1.getKey() + ";" + formatValue(entry1.getValue()) + ";" + entry2.getKey() + ";" + formatValue(entry2.getValue());
-                    resultList.add(s);
-                }
-            }
 
-        }
-        String h=getHeaderTable(dbName,joinReq);
-        System.out.println(h);
-        return resultList;
+        List<Map<String, String>> tablesListFinal = new ArrayList<>();
+        tablesListFinal.add(table1Rec);
+        tablesListFinal.add(table2Rec);
+
+
+        return tablesListFinal;
 
     }
 
-    private String getHeaderTable(String dbName,JoinReq joinReq){
-        String header="";
-        List<String> headerList1=catalogService.getAllColumnNameForTable(dbName,joinReq.getTable1());
-        List<String> headerList2=catalogService.getAllColumnNameForTable(dbName,joinReq.getTable2());
-        for (String s:headerList1){
-            header+=s+";";
+    @Override
+    public List<String> innerJoinServ(String dbName, JoinReq joinReq, String condition,String typeJoin) {
+
+        List<String> resultList = new ArrayList<>();
+
+        List<Map<String, String>> tableRecList = prepareJoinServ(dbName, joinReq, condition);
+        Map<String, String> table1Rec = tableRecList.get(0);
+        Map<String, String> table2Rec = tableRecList.get(1);
+
+        for (Map.Entry<String, String> entry1 : table1Rec.entrySet()) {
+            String val1 = findValueForColumn(entry1, joinReq.getCol1(), dbName, joinReq.getTable1());
+            for (Map.Entry<String, String> entry2 : table2Rec.entrySet()) {
+                String val2 = findValueForColumn(entry2, joinReq.getCol2(), dbName, joinReq.getTable2());
+                if (typeJoin.equals("inner")){
+                    if (val1.equals(val2)) {
+                        String s = entry1.getKey() + ";" + formatValue(entry1.getValue()) + ";" + entry2.getKey() + ";" + formatValue(entry2.getValue());
+                        resultList.add(s);
+                    }
+                }
+                if (typeJoin.equals("left")){
+                    if (val1.equals(val2)) {
+                        String s = entry1.getKey() + ";" + entry1.getValue() + ";" + entry2.getKey() + ";" + entry2.getValue();
+                        resultList.add(s);
+                    } else {
+                        String s = entry1.getKey() + ";" + entry1.getValue() + ";" + "null" + ";" + "null";
+                        resultList.add(s);
+                    }
+                }
+                if (typeJoin.equals("right")){
+                    if (val1.equals(val2)) {
+                        String s = entry1.getKey() + ";" + entry1.getValue() + ";" + entry2.getKey() + ";" + entry2.getValue();
+                        resultList.add(s);
+                    } else {
+                        String s = null + ";" + null + ";" + entry2.getKey() + ";" + entry2.getValue();
+                        resultList.add(s);
+                    }
+                }
+
+            }
+
         }
-        for (int i=0;i<headerList2.size()-1;i++){
-            header+=headerList2.get(i)+";";
+        String h = getHeaderTable(dbName, joinReq);
+        System.out.println(h);
+
+        List<String> select =  selectJoin(h,resultList,joinReq.getSelectedColumns());
+        System.out.println(select);
+
+        return resultList;
+    }
+
+    private String getHeaderTable(String dbName, JoinReq joinReq) {
+        String header = "";
+        List<String> headerList1 = catalogService.getAllColumnNameForTable(dbName, joinReq.getTable1());
+        List<String> headerList2 = catalogService.getAllColumnNameForTable(dbName, joinReq.getTable2());
+        for (String s : headerList1) {
+            header += s + ";";
         }
-        header+=headerList2.get(headerList2.size()-1);
+        for (int i = 0; i < headerList2.size() - 1; i++) {
+            header += headerList2.get(i) + ";";
+        }
+        header += headerList2.get(headerList2.size() - 1);
         return header;
     }
 
@@ -450,66 +494,6 @@ public class RecordServiceImpl implements RecordService {
     }
 
     @Override
-    public List<String> leftNestedJoinServ(String dbName, JoinReq joinReq) {
-        List<String> resultList = new ArrayList<>();
-        String table1 = joinReq.getTable1();
-        String table2 = joinReq.getTable2();
-        String col1 = joinReq.getCol1();
-        String col2 = joinReq.getCol2();
-        //if where
-        //exist index pe coloanele din where
-//            -pe unul
-//            -pe toate
-        Map<String, String> table1Rec = findAllRecords(dbName + "_" + table1);
-        Map<String, String> table2Rec = findAllRecords(dbName + "_" + table2);
-
-        for (Map.Entry<String, String> entry1 : table1Rec.entrySet()) {
-            String val1 = findValueForColumn(entry1, col1, dbName, table1);
-            for (Map.Entry<String, String> entry2 : table2Rec.entrySet()) {
-                String val2 = findValueForColumn(entry2, col2, dbName, table2);
-                if (val1.equals(val2)) {
-                    String s = entry1.getKey() + ";" + entry1.getValue() + ";" + entry2.getKey() + ";" + entry2.getValue();
-                    resultList.add(s);
-                } else {
-                    String s = entry1.getKey() + ";" + entry1.getValue() + ";" + "null" + ";" + "null";
-                    resultList.add(s);
-                }
-            }
-
-        }
-
-        return resultList;
-
-    }
-
-    @Override
-    public List<String> rightNestedJoinServ(String dbName, JoinReq joinReq) {
-        List<String> resultList = new ArrayList<>();
-        String table1 = joinReq.getTable1();
-        String table2 = joinReq.getTable2();
-        String col1 = joinReq.getCol1();
-        String col2 = joinReq.getCol2();
-        Map<String, String> table1Rec = findAllRecords(dbName + "_" + table1);
-        Map<String, String> table2Rec = findAllRecords(dbName + "_" + table2);
-        for (Map.Entry<String, String> entry1 : table1Rec.entrySet()) {
-            String val1 = findValueForColumn(entry1, col1, dbName, table1);
-            for (Map.Entry<String, String> entry2 : table2Rec.entrySet()) {
-                String val2 = findValueForColumn(entry2, col2, dbName, table2);
-                if (val1.equals(val2)) {
-                    String s = entry1.getKey() + ";" + entry1.getValue() + ";" + entry2.getKey() + ";" + entry2.getValue();
-                    resultList.add(s);
-                } else {
-                    String s = null + ";" + null + ";" + entry2.getKey() + ";" + entry2.getValue();
-                    resultList.add(s);
-                }
-            }
-
-        }
-
-        return resultList;
-    }
-
-    @Override
     public List<String> hashJoin(String dbName, JoinReq joinReq, String selectedColumns) {
 
         /*
@@ -538,38 +522,19 @@ public class RecordServiceImpl implements RecordService {
         Map<String, String> MB = new HashMap();
         Map<String, String> C = new HashMap<>();
 
-        for (Map.Entry<String,String> entry : table2Rec.entrySet()){
+        for (Map.Entry<String, String> entry : table2Rec.entrySet()) {
             MB.put(findValueForColumn(entry, jB, dbName, joinReq.getTable2()), entry.getValue());
         }
 
         for (Map.Entry<String,String> a : table1Rec.entrySet()) {
-            String keyTable1 = findValueForColumn2(a, jA, dbName, joinReq.getTable1());
-            boolean merged = false;
             for (Map.Entry<String,String> b : MB.entrySet()) {
-                String c = a.getValue() + b.getValue();
-
-                String keyTable2 = findValueForColumn2(b, jB, dbName, joinReq.getTable2());
-                if(keyTable1!=null && keyTable2!=null && keyTable1.equals(keyTable2)) {
-                    C.put(keyTable1, c);
-                    merged = true;
-                }
-            }
-            if(!merged){
-                C.put(keyTable1, a.getValue());
+                String c = a.getValue() + "|" + b.getValue();
+                C.put(findValueForColumn(a, jA, dbName, joinReq.getTable1()), c);
             }
         }
 
-        String tableHeaders = "CustomerName;ContactName;Country;OrderDate"; // TODO: find all columns
-
-        List<String> array = new ArrayList<String>(C.values());
-
-        for(int i=0; i<array.size(); i++){
-            String oldValue = array.get(i);
-            String newValue = oldValue.replace('#', ';');
-            array.set(i, newValue);
-        }
-
-        return selectJoin(tableHeaders, array, selectedColumns);
+        String tableHeaders = null; // TODO: find all columns
+        return selectJoin(tableHeaders, new ArrayList<String>(C.values()), selectedColumns);
     }
 
     /*
@@ -586,9 +551,6 @@ public class RecordServiceImpl implements RecordService {
         List<String> result = new ArrayList<>();
         String[] allHeaders = colsHeader.split(";");
         String[] selHeaders = selectedHeaders.split(";");
-
-        if(selectedHeaders.equals("*"))
-            selectedHeaders = colsHeader;
 
         for (String rec: records) {
             String selectedRec = "";
