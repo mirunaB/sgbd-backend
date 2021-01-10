@@ -247,63 +247,210 @@ public class RecordServiceImpl implements RecordService {
 
     }
 
-    private String formatValue(String value){
-        String result="";
+    private String formatValue(String value) {
+        String result = "";
         String[] values = value.split("#");
-        for (int i=0;i<values.length-1;i++){
-            result=result+values[i]+";";
+        for (int i = 0; i < values.length - 1; i++) {
+            result = result + values[i] + ";";
         }
-        result+=values[values.length-1];
+        result += values[values.length - 1];
         return result;
 
     }
 
     @Override
-    public List<String> nestedJoinServ(String dbName, JoinReq joinReq) {
+    public List<String> nestedJoinServ(String dbName, JoinReq joinReq, String condition) {
 
+        /*  condition:tabela.numeCol=valANDtabela2.numec2=val2*/
 
-        List<String> resultList=new ArrayList<>();
+        Map<String, String> table1Rec = new HashMap<>();
+        Map<String, String> table2Rec = new HashMap<>();
+
+        List<String> resultList = new ArrayList<>();
         String table1 = joinReq.getTable1();
         String table2 = joinReq.getTable2();
         String col1 = joinReq.getCol1();
         String col2 = joinReq.getCol2();
-        Map<String, String> table1Rec = findAllRecords(dbName + "_" + table1);
-        Map<String, String> table2Rec = findAllRecords(dbName + "_" + table2);
+        if (!condition.equals("")) {
+            String[] conds = condition.split("AND");
+            List<String> tableAndColList = new ArrayList<>();
+            String table = "";
+            for (String cond : conds) {
+                String[] colAndVal = cond.split("=");
+                String col = colAndVal[0];
+                String val = colAndVal[1];
+                String[] tableAndCol = col.split("\\.");
+                String column = tableAndCol[1];
+                table = tableAndCol[0];
+                tableAndColList.add(table + ":" + column + ":" + val);
+            }
+            Map<String, String> finalRes = new HashMap<>();
+            List<String> condWitoutIndexList = new ArrayList<>();
+            for (String tableAndCol : tableAndColList) {
+                String[] tableAndColTokens = tableAndCol.split(":");
+                String tableName = tableAndColTokens[0];
+                String colName = tableAndColTokens[1];
+                String val = tableAndColTokens[2];
+                Map<String, String> allRecordsMap = findAllRecords(dbName + "_" + tableName + "_" + colName + "Ind");
+                if (!allRecordsMap.isEmpty()) {
+                    //index exist
+                    if (finalRes.size() == 0) {
+                        // there is no cond with index yet
+                        System.out.println("first index from condition");
+                        Map<String,String> a= getAllRecordsForValue(dbName + "_" + tableName + "_" + colName + "Ind", val, dbName + "_" + tableName);
+//                        finalRes.put(a.keySet())
+                        System.out.println("final rez");
+                        System.out.println(finalRes);
+                    } else {
+
+                        //intersectie
+                        System.out.println("another index file");
+                        Map<String,String> anotherIndexRez=getAllRecordsForValue(dbName + "_" + tableName + "_" + colName + "Ind", val, dbName + "_" + tableName);
+                        System.out.println(anotherIndexRez);
+                        System.out.println("aici");
+//                        for (Map.Entry<String,String>entry:anotherIndexRez.entrySet()){
+//                            if ()
+//                        }
+                    }
+                } else {
+                    System.out.println("no index for cond");
+                    condWitoutIndexList.add(tableAndCol);
+
+                }
+            }
+
+            if (condWitoutIndexList.size() != 0 && finalRes.size() != 0) {
+                //there are some conditions in where which have no index file
+                System.out.println("one with index and one without index");
+                finalRes = applyConditionNoIndex(finalRes, condWitoutIndexList, dbName);
+            }
+
+            //get records for table which is not in the condition
+            if (table.equals(table1)) {
+                table2Rec = findAllRecords(dbName + "_" + table2);
+                table1Rec = finalRes;
+            } else {
+                table1Rec = findAllRecords(dbName + "_" + table1);
+                table2Rec = finalRes;
+
+            }
+
+            if (finalRes.size() == 0) {
+                //no index
+                System.out.println("no index for all cond");
+                table1Rec = findAllRecords(dbName + "_" + table1);
+                table2Rec = findAllRecords(dbName + "_" + table2);
+                if (table.equals(table1)) {
+                    table1Rec = applyConditionNoIndex(table1Rec, tableAndColList, dbName);
+                } else {
+                    table1Rec = applyConditionNoIndex(table1Rec, tableAndColList, dbName);
+                }
+            }
+
+
+        }
+
+//        selectJoin(listheader,val,selected)
+        else {
+            //no condition
+            System.out.println("no condition");
+            table1Rec = findAllRecords(dbName + "_" + table1);
+            table2Rec = findAllRecords(dbName + "_" + table2);
+        }
         for (Map.Entry<String, String> entry1 : table1Rec.entrySet()) {
-            String val1=findValueForColumn(entry1,col1, dbName,table1);
+            String val1 = findValueForColumn(entry1, col1, dbName, table1);
             for (Map.Entry<String, String> entry2 : table2Rec.entrySet()) {
-                String val2= findValueForColumn(entry2,col2, dbName,table2);
-                if (val1.equals(val2)){
-                    String s=entry1.getKey()+";"+formatValue(entry1.getValue())+";"+entry2.getKey()+";"+formatValue(entry2.getValue());
+                String val2 = findValueForColumn(entry2, col2, dbName, table2);
+                if (val1.equals(val2)) {
+                    String s = entry1.getKey() + ";" + formatValue(entry1.getValue()) + ";" + entry2.getKey() + ";" + formatValue(entry2.getValue());
                     resultList.add(s);
                 }
             }
 
         }
+        String h=getHeaderTable(dbName,joinReq);
+        System.out.println(h);
+        return resultList;
 
-       return resultList;
+    }
+
+    private String getHeaderTable(String dbName,JoinReq joinReq){
+        String header="";
+        List<String> headerList1=catalogService.getAllColumnNameForTable(dbName,joinReq.getTable1());
+        List<String> headerList2=catalogService.getAllColumnNameForTable(dbName,joinReq.getTable2());
+        for (String s:headerList1){
+            header+=s+";";
+        }
+        for (int i=0;i<headerList2.size()-1;i++){
+            header+=headerList2.get(i)+";";
+        }
+        header+=headerList2.get(headerList2.size()-1);
+        return header;
+    }
+
+    private Map<String, String> applyConditionNoIndex(Map<String, String> table1Rec, List<String> tableAndColList, String dbName) {
+        Map<String, String> recFinal = new HashMap<>();
+        for (Map.Entry<String, String> rec : table1Rec.entrySet()) {
+            for (String tableAndCol : tableAndColList) {
+                String[] tableAndColTokens = tableAndCol.split(":");
+                String tableName = tableAndColTokens[0];
+                String colName = tableAndColTokens[1];
+                String val = tableAndColTokens[2];
+                String valRec = findValueForColumn(rec, colName, dbName, tableName);
+                if (valRec.equals(val)) {
+                    recFinal.put(rec.getKey(), rec.getValue());
+                }
+            }
+        }
+        return recFinal;
+    }
+
+    private Map<String, String> getAllRecordsForValue(String indexFileName, String value, String dbTableName) {
+
+        //get all records which have value "value" for column with data=allRecForColumn from indexFileNAme in index file
+
+        Map<String, String> result = new HashMap<>();
+        Map<String, String> allRecords = findAllRecords(dbTableName);
+        String recordForValue = findRecordById(value, indexFileName);
+        if (recordForValue == null) {
+            //don't exist records for condition
+            throw new ServiceException("Don't exist records for condition", ExceptionType.ERROR, HttpStatus.BAD_REQUEST);
+        } else {
+            //exist records
+            String[] ids = recordForValue.split(";");
+            for (String id : ids) {
+                String valueRec = allRecords.get(id);
+                result.put(id, valueRec);
+            }
+        }
+        System.out.println(result);
+        return result;
 
     }
 
     @Override
     public List<String> leftNestedJoinServ(String dbName, JoinReq joinReq) {
-        List<String> resultList=new ArrayList<>();
+        List<String> resultList = new ArrayList<>();
         String table1 = joinReq.getTable1();
         String table2 = joinReq.getTable2();
         String col1 = joinReq.getCol1();
         String col2 = joinReq.getCol2();
+        //if where
+        //exist index pe coloanele din where
+//            -pe unul
+//            -pe toate
         Map<String, String> table1Rec = findAllRecords(dbName + "_" + table1);
         Map<String, String> table2Rec = findAllRecords(dbName + "_" + table2);
+
         for (Map.Entry<String, String> entry1 : table1Rec.entrySet()) {
-            String val1=findValueForColumn(entry1,col1, dbName,table1);
+            String val1 = findValueForColumn(entry1, col1, dbName, table1);
             for (Map.Entry<String, String> entry2 : table2Rec.entrySet()) {
-                String val2= findValueForColumn(entry2,col2, dbName,table2);
-                if (val1.equals(val2)){
-                    String s=entry1.getKey()+";"+entry1.getValue()+";"+entry2.getKey()+";"+entry2.getValue();
+                String val2 = findValueForColumn(entry2, col2, dbName, table2);
+                if (val1.equals(val2)) {
+                    String s = entry1.getKey() + ";" + entry1.getValue() + ";" + entry2.getKey() + ";" + entry2.getValue();
                     resultList.add(s);
-                }
-                else{
-                    String s=entry1.getKey()+";"+entry1.getValue()+";"+"null"+";"+"null";
+                } else {
+                    String s = entry1.getKey() + ";" + entry1.getValue() + ";" + "null" + ";" + "null";
                     resultList.add(s);
                 }
             }
@@ -316,7 +463,7 @@ public class RecordServiceImpl implements RecordService {
 
     @Override
     public List<String> rightNestedJoinServ(String dbName, JoinReq joinReq) {
-        List<String> resultList=new ArrayList<>();
+        List<String> resultList = new ArrayList<>();
         String table1 = joinReq.getTable1();
         String table2 = joinReq.getTable2();
         String col1 = joinReq.getCol1();
@@ -324,15 +471,14 @@ public class RecordServiceImpl implements RecordService {
         Map<String, String> table1Rec = findAllRecords(dbName + "_" + table1);
         Map<String, String> table2Rec = findAllRecords(dbName + "_" + table2);
         for (Map.Entry<String, String> entry1 : table1Rec.entrySet()) {
-            String val1=findValueForColumn(entry1,col1, dbName,table1);
+            String val1 = findValueForColumn(entry1, col1, dbName, table1);
             for (Map.Entry<String, String> entry2 : table2Rec.entrySet()) {
-                String val2= findValueForColumn(entry2,col2, dbName,table2);
-                if (val1.equals(val2)){
-                    String s=entry1.getKey()+";"+entry1.getValue()+";"+entry2.getKey()+";"+entry2.getValue();
+                String val2 = findValueForColumn(entry2, col2, dbName, table2);
+                if (val1.equals(val2)) {
+                    String s = entry1.getKey() + ";" + entry1.getValue() + ";" + entry2.getKey() + ";" + entry2.getValue();
                     resultList.add(s);
-                }
-                else{
-                    String s=null+";"+null+";"+entry2.getKey()+";"+entry2.getValue();
+                } else {
+                    String s = null + ";" + null + ";" + entry2.getKey() + ";" + entry2.getValue();
                     resultList.add(s);
                 }
             }

@@ -17,6 +17,7 @@ public class JoinReq implements Serializable {
     private String table2;
     private String col2;
     private String selectedColumns;
+    private String condition;
 }
 
 
