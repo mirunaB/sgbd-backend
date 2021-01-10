@@ -26,4 +26,5 @@ public interface RecordService {
     List<String> rightNestedJoinServ(String dbName, JoinReq joinReq);
 
 
+    List<String> hashJoin(String dbName, JoinReq joinReq, String a);
 }

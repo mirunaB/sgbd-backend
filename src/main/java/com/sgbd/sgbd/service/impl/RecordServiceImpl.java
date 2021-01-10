@@ -342,6 +342,50 @@ public class RecordServiceImpl implements RecordService {
         return resultList;
     }
 
+    @Override
+    public List<String> hashJoin(String dbName, JoinReq joinReq, String selectedColumns) {
+
+        /*
+        let A = the first input table (or ideally, the larger one)
+        let B = the second input table (or ideally, the smaller one)
+        let jA = the join column ID of table A
+        let jB = the join column ID of table B
+        let MB = a multimap for mapping from single values to multiple rows of table B (starts out empty)
+        let C = the output table (starts out empty)
+
+        for each row b in table B:
+           place b in multimap MB under key b(jB)
+
+        for each row a in table A:
+           for each row b in multimap MB under key a(jA):
+              let c = the concatenation of row a and row b
+              place row c in table C
+         */
+        String table1 = joinReq.getTable1();
+        String table2 = joinReq.getTable2();
+        String jA = joinReq.getCol1();
+        String jB = joinReq.getCol2();
+        Map<String, String> table1Rec = findAllRecords(dbName + "_" + table1);
+        Map<String, String> table2Rec = findAllRecords(dbName + "_" + table2);
+
+        Map<String, String> MB = new HashMap();
+        Map<String, String> C = new HashMap<>();
+
+        for (Map.Entry<String,String> entry : table2Rec.entrySet()){
+            MB.put(findValueForColumn(entry, jB, dbName, joinReq.getTable2()), entry.getValue());
+        }
+
+        for (Map.Entry<String,String> a : table1Rec.entrySet()) {
+            for (Map.Entry<String,String> b : MB.entrySet()) {
+                String c = a.getValue() + "|" + b.getValue();
+                C.put(findValueForColumn(a, jA, dbName, joinReq.getTable1()), c);
+            }
+        }
+
+        String tableHeaders = null; // TODO: find all columns
+        return selectJoin(tableHeaders, new ArrayList<String>(C.values()), selectedColumns);
+    }
+
     /*
     expected:
     colsHeader = email;nume;phone
