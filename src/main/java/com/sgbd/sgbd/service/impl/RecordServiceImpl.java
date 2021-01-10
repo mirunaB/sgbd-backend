@@ -247,27 +247,6 @@ public class RecordServiceImpl implements RecordService {
 
     }
 
-    private String findValueForColumn2(Map.Entry<String, String> entry1, String colName, String dbName, String table1) {
-
-        /*
-        I duplicated this function because i don't know what impact adding 'if(ind==-1) return null;' has
-         */
-
-        String[] values = entry1.getValue().split("#");
-        int ind = findColumnInd(colName, dbName, table1);
-        if(ind == -1)
-            return null;
-        String val;
-        if (ind == 0) {
-            val = entry1.getKey();
-        } else {
-            val = values[ind - 1];
-        }
-        return val;
-
-
-    }
-
     private String formatValue(String value) {
         String result = "";
         String[] values = value.split("#");
@@ -526,8 +505,8 @@ public class RecordServiceImpl implements RecordService {
             MB.put(findValueForColumn(entry, jB, dbName, joinReq.getTable2()), entry.getValue());
         }
 
-        for (Map.Entry<String,String> a : table1Rec.entrySet()) {
-            for (Map.Entry<String,String> b : MB.entrySet()) {
+        for (Map.Entry<String, String> a : table1Rec.entrySet()) {
+            for (Map.Entry<String, String> b : MB.entrySet()) {
                 String c = a.getValue() + "|" + b.getValue();
                 C.put(findValueForColumn(a, jA, dbName, joinReq.getTable1()), c);
             }
@@ -535,6 +514,8 @@ public class RecordServiceImpl implements RecordService {
 
         String tableHeaders = null; // TODO: find all columns
         return selectJoin(tableHeaders, new ArrayList<String>(C.values()), selectedColumns);
+
+
     }
 
     /*
@@ -546,24 +527,24 @@ public class RecordServiceImpl implements RecordService {
     returned:
     list[i] =  1;3
      */
-    private List<String> selectJoin(String colsHeader, List<String> records, String selectedHeaders){
+    private List<String> selectJoin(String colsHeader, List<String> records, String selectedHeaders) {
 
         List<String> result = new ArrayList<>();
         String[] allHeaders = colsHeader.split(";");
         String[] selHeaders = selectedHeaders.split(";");
 
-        for (String rec: records) {
+        for (String rec : records) {
             String selectedRec = "";
             String[] recTokens = rec.split(";");
 
-            for (int i=0; i<selHeaders.length; i++) { // loop through all columns
-                String selectedCol= selHeaders[i];
-                if(Arrays.asList(allHeaders).contains(selectedCol)) { // this is a selected header so i extract the values
+            for (int i = 0; i < selHeaders.length; i++) { // loop through all columns
+                String selectedCol = selHeaders[i];
+                if (Arrays.asList(allHeaders).contains(selectedCol)) { // this is a selected header so i extract the values
                     selectedRec = selectedRec + recTokens[i] + ";";    // append value for selected header
                 }
             }
-            if(!selectedRec.equals("")) { // remove last ";" so it's "1;3" and not "1;3;"
-                selectedRec = RecordServiceImpl.removeLastChar(selectedRec);
+            if (!selectedRec.equals("")) { // remove last ";" so it's "1;3" and not "1;3;"
+                RecordServiceImpl.removeLastChar(selectedRec);
             }
             result.add(selectedRec);
         }
