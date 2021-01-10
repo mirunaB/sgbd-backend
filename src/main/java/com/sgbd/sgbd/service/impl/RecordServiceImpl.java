@@ -247,6 +247,27 @@ public class RecordServiceImpl implements RecordService {
 
     }
 
+    private String findValueForColumn2(Map.Entry<String, String> entry1, String colName, String dbName, String table1) {
+
+        /*
+        I duplicated this function because i don't know what impact adding 'if(ind==-1) return null;' has
+         */
+
+        String[] values = entry1.getValue().split("#");
+        int ind = findColumnInd(colName, dbName, table1);
+        if(ind == -1)
+            return null;
+        String val;
+        if (ind == 0) {
+            val = entry1.getKey();
+        } else {
+            val = values[ind - 1];
+        }
+        return val;
+
+
+    }
+
     private String formatValue(String value) {
         String result = "";
         String[] values = value.split("#");
@@ -522,14 +543,33 @@ public class RecordServiceImpl implements RecordService {
         }
 
         for (Map.Entry<String,String> a : table1Rec.entrySet()) {
+            String keyTable1 = findValueForColumn2(a, jA, dbName, joinReq.getTable1());
+            boolean merged = false;
             for (Map.Entry<String,String> b : MB.entrySet()) {
-                String c = a.getValue() + "|" + b.getValue();
-                C.put(findValueForColumn(a, jA, dbName, joinReq.getTable1()), c);
+                String c = a.getValue() + b.getValue();
+
+                String keyTable2 = findValueForColumn2(b, jB, dbName, joinReq.getTable2());
+                if(keyTable1!=null && keyTable2!=null && keyTable1.equals(keyTable2)) {
+                    C.put(keyTable1, c);
+                    merged = true;
+                }
+            }
+            if(!merged){
+                C.put(keyTable1, a.getValue());
             }
         }
 
-        String tableHeaders = null; // TODO: find all columns
-        return selectJoin(tableHeaders, new ArrayList<String>(C.values()), selectedColumns);
+        String tableHeaders = "CustomerName;ContactName;Country;OrderDate"; // TODO: find all columns
+
+        List<String> array = new ArrayList<String>(C.values());
+
+        for(int i=0; i<array.size(); i++){
+            String oldValue = array.get(i);
+            String newValue = oldValue.replace('#', ';');
+            array.set(i, newValue);
+        }
+
+        return selectJoin(tableHeaders, array, selectedColumns);
     }
 
     /*
@@ -547,6 +587,9 @@ public class RecordServiceImpl implements RecordService {
         String[] allHeaders = colsHeader.split(";");
         String[] selHeaders = selectedHeaders.split(";");
 
+        if(selectedHeaders.equals("*"))
+            selectedHeaders = colsHeader;
+
         for (String rec: records) {
             String selectedRec = "";
             String[] recTokens = rec.split(";");
@@ -558,7 +601,7 @@ public class RecordServiceImpl implements RecordService {
                 }
             }
             if(!selectedRec.equals("")) { // remove last ";" so it's "1;3" and not "1;3;"
-                RecordServiceImpl.removeLastChar(selectedRec);
+                selectedRec = RecordServiceImpl.removeLastChar(selectedRec);
             }
             result.add(selectedRec);
         }
