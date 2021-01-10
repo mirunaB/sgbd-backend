@@ -212,11 +212,11 @@ public class RecordApi {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping(value = "/hashJoin/{dbName}", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity hashJoin(@PathVariable String dbName, @RequestBody JoinReq joinReq, @RequestBody String selectedColumns) {
+    public ResponseEntity hashJoin(@PathVariable String dbName, @RequestBody JoinReq joinReq) {
 
         logger.info("LOG START - hashJoin");
 
-        List<String> result=recordService.hashJoin(dbName,joinReq, selectedColumns);
+        List<String> result=recordService.hashJoin(dbName,joinReq, joinReq.getSelectedColumns());
 
         logger.info("LOG FINISH - hashJoin");
         return new ResponseEntity(result,HttpStatus.OK);
