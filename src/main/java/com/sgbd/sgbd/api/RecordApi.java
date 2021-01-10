@@ -205,7 +205,7 @@ public class RecordApi {
 
         logger.info("LOG START - join");
 
-        List<String> result=recordService.nestedJoinServ(dbName,joinReq);
+        List<String> result=recordService.nestedJoinServ(dbName,joinReq,joinReq.getCondition());
         logger.info("LOG FINISH - join");
         return new ResponseEntity(result,HttpStatus.OK);
     }
