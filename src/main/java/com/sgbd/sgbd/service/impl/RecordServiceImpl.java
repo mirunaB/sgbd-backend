@@ -1,9 +1,6 @@
 package com.sgbd.sgbd.service.impl;
 
-import com.sgbd.sgbd.model.Column;
-import com.sgbd.sgbd.model.JoinReq;
-import com.sgbd.sgbd.model.Pair;
-import com.sgbd.sgbd.model.Record;
+import com.sgbd.sgbd.model.*;
 import com.sgbd.sgbd.repo.RecordRepository;
 import com.sgbd.sgbd.service.RecordService;
 import com.sgbd.sgbd.service.exception.ExceptionType;
@@ -413,9 +410,10 @@ public class RecordServiceImpl implements RecordService {
         System.out.println(h);
 
         List<String> select = selectJoin(h, resultList, joinReq.getSelectedColumns());
-        System.out.println(select);
+        System.out.println("select ***"+select);
 
-        return resultList;
+
+        return select;
     }
 
     private String getHeaderTable(String dbName, JoinReq joinReq) {
@@ -554,12 +552,13 @@ public class RecordServiceImpl implements RecordService {
             String selectedRec = "";
             String[] recTokens = rec.split(";");
 
-            if(selectedHeaders.equals("*"))
+            if(selectedHeaders.equals("*")) {
                 selectedHeaders = colsHeader;
-
-            for (int i = 0; i < selHeaders.length; i++) { // loop through all columns
-                String selectedCol = selHeaders[i];
-                if (Arrays.asList(allHeaders).contains(selectedCol)) { // this is a selected header so i extract the values
+                selHeaders = selectedHeaders.split(";");
+            }
+            for (int i = 0; i < allHeaders.length; i++) { // loop through all columns
+                String selectedCol = allHeaders[i];
+                if (Arrays.asList(selHeaders).contains(selectedCol)) { // this is a selected header so i extract the values
                     selectedRec = selectedRec + recTokens[i] + ";";    // append value for selected header
                 }
             }
