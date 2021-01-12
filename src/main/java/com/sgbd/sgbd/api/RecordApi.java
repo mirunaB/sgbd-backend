@@ -200,7 +200,7 @@ public class RecordApi {
 
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping(value = "/innerJoin/{dbName}", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/innerJoin/{dbName}", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity nestedJoin(@PathVariable String dbName, @RequestBody JoinReq joinReq) {
 
         logger.info("LOG START - join");
@@ -211,7 +211,7 @@ public class RecordApi {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping(value = "/leftInnerJoin/{dbName}", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/leftInnerJoin/{dbName}", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity leftnestedJoin(@PathVariable String dbName, @RequestBody JoinReq joinReq) {
 
         logger.info("LOG START - left join");
@@ -222,7 +222,7 @@ public class RecordApi {
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping(value = "/rightInnerJoin/{dbName}", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/rightInnerJoin/{dbName}", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity rightnestedJoin(@PathVariable String dbName, @RequestBody JoinReq joinReq) {
 
         logger.info("LOG START - left join");
@@ -242,6 +242,31 @@ public class RecordApi {
 
         logger.info("LOG FINISH - hashJoin");
         return new ResponseEntity(result,HttpStatus.OK);
+    }
+
+//    @CrossOrigin(origins = "http://localhost:3000")
+//    @GetMapping(value = "/groupBy/{dbName}/{tableName}/{colName}", produces = MediaType.APPLICATION_JSON_VALUE,consumes = MediaType.APPLICATION_JSON_VALUE)
+//    public ResponseEntity<Map> groupBy(@PathVariable String dbName,@PathVariable String tableName,@PathVariable String colName) {
+//
+//        logger.info("LOG START - groupBy");
+//
+//        Map<String,String> result=recordService.groupByServ(colName,dbName,tableName);
+//        System.out.println(result);
+//
+//        logger.info("LOG FINISH - groupBy");
+//        return new ResponseEntity<>(result,HttpStatus.OK);
+//    }
+
+    @CrossOrigin(origins = "http://localhost:3000")
+    @GetMapping(value = "/groupBy/{dbName}/{tableName}/{colName}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Map> grouptBy(@PathVariable String dbName,@PathVariable String tableName,@PathVariable String colName){
+
+        logger.info("LOG START - find all");
+
+        Map result = recordService.groupByServ(colName,dbName,tableName);
+
+        logger.info("LOG FINISH - find all");
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
 

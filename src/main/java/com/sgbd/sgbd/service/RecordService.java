@@ -23,6 +23,7 @@ public interface RecordService {
     List<String> select(String dbName, String tableName, String condition, String columns) throws Exception;
     List<Map<String,String>> prepareJoinServ(String dbName, JoinReq joinReq,String condition);
     List<String> innerJoinServ(String dbName, JoinReq joinReq, String condition,String typeJoin);
+    Map<String,String> groupByServ(String groupColName,String dbName,String table);
 
 
     List<String> hashJoin(String dbName, JoinReq joinReq, String a);

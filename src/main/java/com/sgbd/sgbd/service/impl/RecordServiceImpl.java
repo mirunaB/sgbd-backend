@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Service
 @Primary
@@ -413,6 +414,9 @@ public class RecordServiceImpl implements RecordService {
         System.out.println("select ***"+select);
 
 
+        Map<String,String> m=groupByServ("adress","test","t4");
+        System.out.println(m);
+
         return select;
     }
 
@@ -590,6 +594,49 @@ public class RecordServiceImpl implements RecordService {
         return val;
 
 
+    }
+
+    @Override
+    public Map<String,String> groupByServ(String groupColName,String dbName,String table){
+        Map<String,String> map=findAllRecords(dbName+"_"+table);
+        Map<String,String> result=new LinkedHashMap <>();
+        List<String> valueColAdded=new ArrayList<>();
+        if (!findAllRecords(dbName+"_"+table+"_"+groupColName+"Ind").isEmpty()){
+            //index file exists
+            Map<String,String> recIndex= findAllRecords(dbName+"_"+table+"_"+groupColName+"Ind");
+            for (Map.Entry<String,String> entryInd:recIndex.entrySet()){
+                String[] keys= entryInd.getValue().split(";");
+                for (String key:keys){
+                    String val=map.get(key);
+                    result.put(key,val);
+                }
+            }
+        }
+        else{
+            //index file doesn;t exists
+            int colInd=findColumnInd(groupColName,dbName,table);
+            String valCol2="";
+            String valCol="";
+            for (Map.Entry<String,String> entry:map.entrySet()){
+                String[] vals=entry.getValue().split("#");
+                valCol=vals[colInd-1];
+                if (!Arrays.asList(valueColAdded).contains(valCol)){
+                    for (Map.Entry<String,String> entry2:map.entrySet()){
+                        String[] vals2=entry2.getValue().split("#");
+                        valCol2=vals2[colInd-1];
+                        if (valCol.equals(valCol2)){
+                            if (result.get(entry2.getKey())==null){
+                                result.put(entry2.getKey(),entry2.getValue());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+//        System.out.println(result.size());
+//        System.out.println(result);
+        return result;
     }
 
     private static String removeLastChar(String str) {
